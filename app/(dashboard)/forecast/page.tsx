@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/shared/ui/badge';
-import { AlertTriangle, CloudRain, RefreshCw, Compass } from '@/shared/ui/icons';
+import { AlertTriangle, CloudRain, RefreshCw, Compass, Search, Pin, Download } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
 
 interface DistrictRow {
@@ -174,6 +174,12 @@ export default function ForecastPage() {
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictRow>(DISTRICT_DATA[0]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTier, setSelectedTier] = useState<string>('ALL');
+  const [isAnimated, setIsAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Filtered districts
   const filteredDistricts = DISTRICT_DATA.filter((d) => {
@@ -223,7 +229,7 @@ export default function ForecastPage() {
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {/* Search Input */}
           <div className="flex items-center gap-1.5 bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] rounded-full px-3 py-1">
-            <span className="text-neutral-400 text-[11px]">🔍</span>
+            <Search size={13} className="text-neutral-400 shrink-0" />
             <input
               type="text"
               placeholder="Search district..."
@@ -377,11 +383,17 @@ export default function ForecastPage() {
                 <span className="text-[10px] text-neutral-500 dark:text-neutral-400">DISTRICT ID: {selectedDistrict.id}</span>
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-2.5 py-0.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white text-xs transition-colors">
-                  📌
+                <button
+                  title="Pin Station"
+                  className="p-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  <Pin size={12} className="shrink-0" />
                 </button>
-                <button className="px-2.5 py-0.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white text-xs transition-colors">
-                  ↓
+                <button
+                  title="Export Station Data"
+                  className="p-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  <Download size={12} className="shrink-0" />
                 </button>
                 <button
                   onClick={() => alert(`Issuing Emergency Hydro-Meteorological Warning Bulletin for ${selectedDistrict.name}...`)}
@@ -472,7 +484,7 @@ export default function ForecastPage() {
                 {/* Hourly Hyetograph Bars */}
                 {hyetographData.map((d, idx) => {
                   const x = 50 + idx * 44;
-                  const barHeight = (d.rain / 40) * 120;
+                  const barHeight = isAnimated ? (d.rain / 40) * 120 : 0;
                   const y = 170 - barHeight;
 
                   return (
@@ -485,6 +497,7 @@ export default function ForecastPage() {
                         fill={d.rain > 25 ? '#dc2626' : d.rain > 15 ? '#d97706' : '#525252'}
                         rx="2"
                         opacity="0.85"
+                        style={{ transition: `height 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms, y 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms` }}
                       />
                       {/* X-axis labels */}
                       <text x={x + 9} y="185" fill="#737373" fontSize="8" textAnchor="middle">
@@ -500,7 +513,9 @@ export default function ForecastPage() {
                   fill="none"
                   stroke="#737373"
                   strokeWidth="1.5"
-                  strokeDasharray="4 3"
+                  strokeDasharray="700"
+                  strokeDashoffset={isAnimated ? 0 : 700}
+                  style={{ transition: 'stroke-dashoffset 1.4s ease-out 0.4s' }}
                 />
 
                 {/* EVRIN P90 Calibrated Runoff Curve */}
@@ -509,6 +524,9 @@ export default function ForecastPage() {
                   fill="none"
                   stroke="#0284c7"
                   strokeWidth="2.5"
+                  strokeDasharray="700"
+                  strokeDashoffset={isAnimated ? 0 : 700}
+                  style={{ transition: 'stroke-dashoffset 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s' }}
                 />
 
                 {/* Peak Convective Burst Callout Badge */}
@@ -572,7 +590,7 @@ export default function ForecastPage() {
                     <strong className="text-neutral-800 dark:text-slate-200">82.1 mm</strong>
                   </div>
                   <div className="w-full bg-neutral-100 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-neutral-400 dark:bg-neutral-600 h-full rounded-full" style={{ width: '55%' }} />
+                    <div className="bg-neutral-400 dark:bg-neutral-600 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isAnimated ? '55%' : '0%' }} />
                   </div>
                 </div>
 
@@ -582,7 +600,7 @@ export default function ForecastPage() {
                     <strong className="text-neutral-900 dark:text-white">114.5 mm</strong>
                   </div>
                   <div className="w-full bg-neutral-100 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: '75%' }} />
+                    <div className="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isAnimated ? '75%' : '0%' }} />
                   </div>
                 </div>
 
@@ -592,7 +610,7 @@ export default function ForecastPage() {
                     <strong className="text-rose-600 dark:text-rose-400">148.2 mm</strong>
                   </div>
                   <div className="w-full bg-neutral-100 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-rose-500 h-full rounded-full" style={{ width: '95%' }} />
+                    <div className="bg-rose-500 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isAnimated ? '95%' : '0%' }} />
                   </div>
                 </div>
               </div>

@@ -5,8 +5,7 @@ import { MapLayerId, MapDistrictPoint } from '../model/types';
 import { MapLayerControl } from './MapLayerControl';
 import { MapLegend } from './MapLegend';
 import { useForecastRepository } from '@/entities/repository';
-import { formatPercentage } from '@/shared/lib/utils';
-import { RefreshCw } from '@/shared/ui/icons';
+import { RefreshCw, SkipBack, SkipForward, ChevronLeft, ChevronRight, Pause } from '@/shared/ui/icons';
 import { useTheme } from '@/shared/lib/theme';
 
 // Declare Leaflet global type
@@ -747,14 +746,24 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
         {/* Dynamic Accumulation / Anomaly Scale Bar */}
         <MapLegend activeLayer={activeLayer} />
 
-        {/* Time Horizon Slider Player with Vercel Transparent Pills */}
+        {/* Time Horizon Slider Player with Clean Lucide Icons */}
         <div className="flex items-center gap-2 text-[10px] text-neutral-500 dark:text-neutral-400">
-          <div className="flex items-center gap-1 text-neutral-500 font-bold px-1">
-            <button className="hover:text-black dark:hover:text-white">|&lt;</button>
-            <button className="hover:text-black dark:hover:text-white">&lt;</button>
-            <button className="text-neutral-900 dark:text-white px-0.5">||</button>
-            <button className="hover:text-black dark:hover:text-white">&gt;</button>
-            <button className="hover:text-black dark:hover:text-white">&gt;|</button>
+          <div className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400 px-1">
+            <button className="p-1 hover:text-black dark:hover:text-white transition-colors" title="First Horizon">
+              <SkipBack size={11} />
+            </button>
+            <button className="p-1 hover:text-black dark:hover:text-white transition-colors" title="Previous Horizon">
+              <ChevronLeft size={12} />
+            </button>
+            <button className="p-1 text-neutral-900 dark:text-white hover:text-black dark:hover:text-white transition-colors" title="Pause / Play">
+              <Pause size={11} />
+            </button>
+            <button className="p-1 hover:text-black dark:hover:text-white transition-colors" title="Next Horizon">
+              <ChevronRight size={12} />
+            </button>
+            <button className="p-1 hover:text-black dark:hover:text-white transition-colors" title="Last Horizon">
+              <SkipForward size={11} />
+            </button>
           </div>
 
           <div className="flex items-center gap-1">

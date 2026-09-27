@@ -15,7 +15,7 @@ export function RegimeTimelineWidget() {
     <Card>
       <CardHeader>
         <CardTitle className="text-xs">
-          Regime Transition Timeline (Past 48h ➔ Next 72h)
+          Regime Transition Timeline (Past 48h to Next 72h)
         </CardTitle>
       </CardHeader>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">

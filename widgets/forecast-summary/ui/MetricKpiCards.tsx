@@ -5,7 +5,7 @@ import { Card } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
 import { useForecastRepository } from '@/entities/repository';
 import { formatPercentage, formatRainfall } from '@/shared/lib/utils';
-import { RefreshCw } from '@/shared/ui/icons';
+import { RefreshCw, TrendingDown } from '@/shared/ui/icons';
 
 export function MetricKpiCards() {
   const { activeScenario } = useForecastRepository();
@@ -83,11 +83,11 @@ export function MetricKpiCards() {
         <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
             <span>CORRECTION IMPACT</span>
-            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">RMSE ↓</span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-0.5"><TrendingDown size={12} className="shrink-0" /> RMSE</span>
           </div>
-          <div className="text-base font-bold text-emerald-600 dark:text-emerald-400 tracking-tight mt-1">
-            RMSE ↓ 18.4%
-          </div>
+            <div className="text-base font-bold text-emerald-600 dark:text-emerald-400 tracking-tight mt-1 flex items-center gap-1">
+              <TrendingDown size={14} className="shrink-0" /> RMSE 18.4%
+            </div>
           <div className="flex items-center justify-between text-[11px] text-neutral-500 dark:text-neutral-400 mt-2 pt-2 border-t border-neutral-100 dark:border-[#1a1a1a]">
             <span>ECMWF/GFS Baseline</span>
             <span className="text-emerald-600 dark:text-emerald-400 font-semibold">CSI: +0.14</span>

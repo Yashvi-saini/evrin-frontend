@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/shared/ui/badge';
-import { AlertTriangle, RefreshCw, ShieldAlert, Users, Clock, Wind, ArrowUpRight, Zap, CheckCircle2 } from '@/shared/ui/icons';
+import { AlertTriangle, RefreshCw, ShieldAlert, Users, Clock, Wind, ArrowUpRight, Zap, CheckCircle2, Download, Play, SkipBack, SkipForward } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
 import { useTheme } from '@/shared/lib/theme';
 
@@ -19,6 +19,12 @@ export default function ExtremesPage() {
   const [selectedCutoff, setSelectedCutoff] = useState<string>('64.5');
   const [activeHorizon, setActiveHorizon] = useState<string>('+24h');
   const [isLeafletReady, setIsLeafletReady] = useState(false);
+  const [isAnimated, setIsAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -442,9 +448,10 @@ export default function ExtremesPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => alert('Exporting NDMA/IMD Extreme Weather Alert Bulletin (PDF/GeoJSON)...')}
-              className="px-3 py-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1f1f1f] border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white text-xs transition-colors"
+              className="px-3 py-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1f1f1f] border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white text-xs transition-colors flex items-center gap-1.5"
             >
-              📥 Export Alert Bulletin (NDMA/IMD Format)
+              <Download size={13} className="shrink-0" />
+              <span>Export Alert Bulletin (NDMA/IMD Format)</span>
             </button>
             <button
               onClick={() => alert('Broadcasting Emergency Push Notification to District Disaster Response Forces...')}
@@ -500,7 +507,7 @@ export default function ExtremesPage() {
             124 <span className="text-sm font-normal text-neutral-500">Districts</span>
           </div>
           <div className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
-            <span>↗ +18 vs Raw NWP (Regime Shift)</span>
+            <span>+18 vs Raw NWP (Regime Shift)</span>
           </div>
         </div>
 
@@ -651,10 +658,16 @@ export default function ExtremesPage() {
 
             {/* Player Controls & Horizon Pills */}
             <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400 px-1 font-bold">
-                <button className="hover:text-black dark:hover:text-white">|◀</button>
-                <button className="hover:text-black dark:hover:text-white text-neutral-900 dark:text-white">▶</button>
-                <button className="hover:text-black dark:hover:text-white">▶|</button>
+              <div className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400 px-1">
+                <button className="p-0.5 hover:text-black dark:hover:text-white transition-colors" title="First">
+                  <SkipBack size={11} />
+                </button>
+                <button className="p-0.5 hover:text-black dark:hover:text-white text-neutral-900 dark:text-white transition-colors" title="Play / Pause">
+                  <Play size={11} className="fill-current" />
+                </button>
+                <button className="p-0.5 hover:text-black dark:hover:text-white transition-colors" title="Last">
+                  <SkipForward size={11} />
+                </button>
               </div>
 
               {horizons.map((h) => {
@@ -751,7 +764,8 @@ export default function ExtremesPage() {
                 <path
                   d="M 180,50 Q 230,22 280,18 L 280,48 Q 230,52 180,62 Z"
                   fill="#06b6d4"
-                  fillOpacity="0.15"
+                  fillOpacity={isAnimated ? 0.2 : 0}
+                  style={{ transition: 'fill-opacity 1.5s ease-out' }}
                 />
 
                 {/* Raw NWP CDF (Gray curve) */}
@@ -760,6 +774,9 @@ export default function ExtremesPage() {
                   fill="none"
                   stroke="#737373"
                   strokeWidth="1.8"
+                  strokeDasharray="400"
+                  strokeDashoffset={isAnimated ? 0 : 400}
+                  style={{ transition: 'stroke-dashoffset 1.2s ease-out' }}
                 />
 
                 {/* EVRIN MoE Corrected CDF (Solid line) */}
@@ -768,6 +785,9 @@ export default function ExtremesPage() {
                   fill="none"
                   stroke="#10b981"
                   strokeWidth="2.5"
+                  strokeDasharray="400"
+                  strokeDashoffset={isAnimated ? 0 : 400}
+                  style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1)' }}
                 />
 
                 {/* Tail Amplification Annotation */}

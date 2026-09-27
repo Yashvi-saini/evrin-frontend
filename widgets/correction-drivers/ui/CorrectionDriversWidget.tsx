@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useForecastRepository } from '@/entities/repository';
-import { AlertTriangle } from '@/shared/ui/icons';
+import { AlertTriangle, Sparkles, Activity, ArrowRight, Download } from '@/shared/ui/icons';
 
 export function CorrectionDriversWidget() {
   const { activeScenario } = useForecastRepository();
@@ -40,7 +40,7 @@ export function CorrectionDriversWidget() {
       {/* WHY DID EVRIN CORRECT THIS? */}
       <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 shadow-sm">
         <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-tight mb-1">
-          <span className="text-neutral-500">⊕</span>
+          <Sparkles size={13} className="text-[#1A8FCB] dark:text-sky-400" />
           <span>Why Did EVRIN Correct This?</span>
         </div>
         <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mb-3 leading-tight">
@@ -79,10 +79,10 @@ export function CorrectionDriversWidget() {
           className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-800 dark:text-neutral-200 hover:text-black dark:hover:text-white text-[11px] transition-colors group"
         >
           <div className="flex items-center gap-2">
-            <span className="text-neutral-500">~</span>
+            <Activity size={13} className="text-neutral-500" />
             <span>Inspect District Time Series</span>
           </div>
-          <span className="text-neutral-400 group-hover:text-black dark:group-hover:text-white">→</span>
+          <ArrowRight size={13} className="text-neutral-400 group-hover:text-black dark:group-hover:text-white transition-transform group-hover:translate-x-0.5" />
         </button>
 
         {/* Action 2: Download GRIB2 Grid Field */}
@@ -91,10 +91,10 @@ export function CorrectionDriversWidget() {
           className="w-full flex items-center justify-between px-3.5 py-2 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-800 dark:text-neutral-200 hover:text-black dark:hover:text-white text-[11px] transition-colors"
         >
           <div className="flex items-center gap-2">
-            <span className="text-neutral-500">{`{}`}</span>
+            <Download size={13} className="text-neutral-500" />
             <span>Download GRIB2 Grid Field</span>
           </div>
-          <span className="text-[10px] text-neutral-400">18.4 MB</span>
+          <span className="text-[10px] text-neutral-400 font-mono">18.4 MB</span>
         </button>
 
         {/* Action 3: Issue Early Warning Advisory */}

@@ -1,11 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/shared/ui/badge';
 import { Database, RefreshCw, Activity, CheckCircle2, Zap, Radio, Server } from '@/shared/ui/icons';
 
 export default function DataPage() {
   const [selectedFeedFilter, setSelectedFeedFilter] = useState<string>('all');
+  const [isAnimated, setIsAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   const feeds = [
     {
@@ -178,22 +184,29 @@ export default function DataPage() {
         </div>
 
         {/* SVG Latency Barcode Sparkline */}
-        <div className="w-full h-20 bg-neutral-50 dark:bg-[#0A0A0A] rounded border border-neutral-200 dark:border-[#262626] p-2 flex items-end gap-1">
+        <div className="w-full h-20 bg-neutral-50 dark:bg-[#0A0A0A] rounded border border-neutral-200 dark:border-[#262626] p-2 flex items-end gap-[2px]">
           {Array.from({ length: 48 }).map((_, idx) => {
-            const h = 25 + Math.sin(idx * 0.4) * 15 + (idx % 7 === 0 ? 30 : 0);
+            const h = 25 + Math.sin(idx * 0.4) * 15 + (idx % 7 === 0 ? 35 : 0);
             const isBurst = idx % 7 === 0;
+            const delay = idx * 15; // 15ms stagger per bar = ~720ms total wave
             return (
               <div
                 key={idx}
-                className="flex-1 rounded-t transition-all group relative cursor-pointer"
+                className="flex-1 rounded-t group relative cursor-pointer"
                 style={{
-                  height: `${h}%`,
-                  backgroundColor: isBurst ? '#0284c7' : '#737373',
-                  opacity: isBurst ? 0.9 : 0.35,
+                  height: isAnimated ? `${h}%` : '0%',
+                  minWidth: '2px',
+                  backgroundColor: isBurst ? '#1A8FCB' : '#737373',
+                  opacity: isAnimated ? (isBurst ? 1 : 0.4) : 0,
+                  transform: isAnimated ? 'scaleY(1)' : 'scaleY(0)',
+                  transformOrigin: 'bottom',
+                  transition: `height 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms,
+                               opacity 0.3s ease-out ${delay}ms,
+                               transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms`,
                 }}
               >
-                <div className="hidden group-hover:block absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-neutral-900 text-white border border-neutral-700 text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap z-10 font-mono">
-                  Cycle #{idx}: {h.toFixed(0)} MB/s
+                <div className="hidden group-hover:block absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-neutral-900 dark:bg-white dark:text-neutral-900 text-white border border-neutral-700 dark:border-neutral-200 text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap z-10 font-mono">
+                  T-{48 - idx}h: {h.toFixed(0)} MB/s
                 </div>
               </div>
             );

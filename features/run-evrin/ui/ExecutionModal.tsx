@@ -124,7 +124,7 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
                     {isCompleted && (
                       <span className="text-emerald-500 dark:text-emerald-400 flex items-center gap-1 font-bold text-xs">
                         <CheckCircle2 size={14} />
-                        <span>✓</span>
+                        <span>Done</span>
                       </span>
                     )}
                     {isRunning && (
@@ -148,7 +148,7 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
           {isFinished ? (
             <div className="w-full space-y-3">
               <div className="p-2.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 font-semibold flex items-center justify-between text-xs">
-                <span>✓ EVRIN FORECAST READY</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="shrink-0" /> EVRIN FORECAST READY</span>
                 <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">Calibrated in 2.9s</span>
               </div>
               <div className="flex justify-end gap-2">

@@ -59,7 +59,7 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
         <div className="flex md:hidden items-center justify-between p-3.5 border-b border-neutral-200 dark:border-[#262626]">
           <div className="flex items-center gap-2">
             <span className="font-bold text-neutral-900 dark:text-neutral-100 text-sm tracking-wider">EVRIN OPS</span>
-            <span className="text-[9px] bg-neutral-100 dark:bg-[#141414] text-neutral-800 dark:text-neutral-200 px-1 py-0.5 rounded font-semibold border border-neutral-300 dark:border-[#262626]">
+            <span className="text-[9px] bg-[#1A8FCB]/10 dark:bg-[#141414] text-[#1A8FCB] dark:text-neutral-200 px-1.5 py-0.5 rounded font-semibold border border-[#1A8FCB]/30 dark:border-[#262626]">
               PRO
             </span>
           </div>
@@ -71,8 +71,26 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
           </button>
         </div>
 
+        {/* Desktop Brand Header */}
+        <div className="hidden md:flex items-center justify-between px-3.5 py-3 border-b border-neutral-200 dark:border-[#262626]">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-[#1A8FCB]/10 dark:bg-[#141414] border border-[#1A8FCB]/30 dark:border-[#262626] flex items-center justify-center text-[#1A8FCB] dark:text-neutral-200">
+              <CloudRain size={13} />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-neutral-900 dark:text-white tracking-wide flex items-center gap-1.5">
+                <span>EVRIN OPS</span>
+                <span className="text-[8px] bg-[#1A8FCB]/10 text-[#1A8FCB] dark:bg-white/10 dark:text-white px-1 py-0.2 rounded font-bold">
+                  AI
+                </span>
+              </div>
+              <div className="text-[9px] text-neutral-500 dark:text-neutral-400">National Met Grid</div>
+            </div>
+          </div>
+        </div>
+
         {/* Navigation Links */}
-        <div className="flex-1 py-4 px-2.5 space-y-1 overflow-y-auto">
+        <div className="flex-1 py-3 px-2.5 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.path || (item.path !== '/overview' && pathname.startsWith(item.path));
@@ -85,19 +103,19 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
                 className={cn(
                   'flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all group',
                   isActive
-                    ? 'bg-neutral-100 dark:bg-[#141414] text-neutral-900 dark:text-neutral-100 font-semibold border border-neutral-200 dark:border-[#262626]'
-                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-[#141414] border border-transparent'
+                    ? 'bg-[#1A8FCB]/10 text-[#1A8FCB] font-semibold border border-[#1A8FCB]/30 shadow-none dark:bg-[#141414] dark:text-white dark:border-[#262626]'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-[#141414] border border-transparent'
                 )}
               >
                 <div className="flex items-center gap-2.5">
-                  <span className={cn('shrink-0 transition-colors', isActive ? 'text-neutral-900 dark:text-white' : 'text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300')}>
+                  <span className={cn('shrink-0 transition-colors', isActive ? 'text-[#1A8FCB] dark:text-white' : 'text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300')}>
                     <Icon size={15} />
                   </span>
                   <span className="truncate">{item.name}</span>
                 </div>
 
                 {item.badge && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-900/60 font-bold">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-900/60 font-mono font-bold">
                     {item.badge}
                   </span>
                 )}
@@ -106,7 +124,7 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
           })}
 
           {/* Action Button in Sidebar */}
-          <div className="pt-4 px-1">
+          <div className="pt-3 px-0.5">
             <button
               onClick={() => {
                 onCloseMobile?.();
@@ -121,35 +139,30 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
           </div>
         </div>
 
-        {/* Telemetry Links Footer */}
-        <div className="p-3 border-t border-neutral-200 dark:border-[#262626] bg-neutral-50 dark:bg-[#0A0A0A] text-[10px] text-neutral-500 dark:text-neutral-400">
-          <div className="text-[9px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2 font-semibold">
-            Telemetry Links
-          </div>
-          <div className="space-y-1.5">
+        {/* Telemetry Status Card Footer */}
+        <div className="p-2.5 border-t border-neutral-200 dark:border-[#262626] bg-neutral-50/50 dark:bg-[#0A0A0A]">
+          <div className="p-2.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] text-[10px] space-y-2 shadow-xs">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span>NWP 06 UTC</span>
+              <span className="text-[9px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>TELEMETRY FEED</span>
               </span>
-              <span>Synced (42m)</span>
+              <span className="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.2 rounded border border-emerald-300 dark:border-emerald-800">LIVE</span>
             </div>
 
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span>Obs 03 UTC</span>
-              </span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">Live</span>
+            <div className="space-y-1 text-neutral-600 dark:text-neutral-400 font-mono text-[9px]">
+              <div className="flex items-center justify-between">
+                <span>NWP ECMWF 06Z</span>
+                <span className="text-neutral-800 dark:text-neutral-200 font-medium">Synced</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>A100 Acceleration</span>
+                <span className="text-[#1A8FCB] dark:text-sky-400 font-semibold">1.84x Speedup</span>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <span>System Healthy</span>
-              <span className="text-neutral-800 dark:text-neutral-200 font-semibold">1.84x (A100)</span>
-            </div>
-
-            <div className="pt-1.5 border-t border-neutral-200 dark:border-[#262626] truncate">
-              Inference Cluster: Asia-South1
+            <div className="pt-1.5 border-t border-neutral-100 dark:border-[#222222] text-[8px] text-neutral-400 dark:text-neutral-500 truncate">
+              Cluster: Asia-South1 (Active)
             </div>
           </div>
         </div>

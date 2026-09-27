@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/shared/ui/badge';
-import { RefreshCw, Wind, Compass, Activity, CheckCircle2, ChevronDown, Layers } from '@/shared/ui/icons';
+import { RefreshCw, Wind, Compass, Activity, CheckCircle2, ChevronDown, Layers, Info } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
 import { useTheme } from '@/shared/lib/theme';
 
@@ -17,10 +17,16 @@ export default function RegimesPage() {
   const { activeScenario, isLoading } = useForecastRepository();
   const [activeMapMode, setActiveMapMode] = useState<string>('streamlines');
   const [isLeafletReady, setIsLeafletReady] = useState(false);
+  const [isAnimated, setIsAnimated] = useState(false);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const tileLayerRef = useRef<any>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Load Leaflet dynamically
   useEffect(() => {
@@ -510,9 +516,9 @@ export default function RegimesPage() {
               <span className="text-neutral-500 dark:text-neutral-400">Depression: 14%</span>
             </div>
             <div className="w-full bg-neutral-200 dark:bg-[#222222] rounded-full h-1.5 overflow-hidden flex">
-              <div className="h-full bg-neutral-800 dark:bg-white" style={{ width: '78%' }} />
-              <div className="h-full bg-sky-500" style={{ width: '14%' }} />
-              <div className="h-full bg-amber-500" style={{ width: '8%' }} />
+              <div className="h-full bg-neutral-800 dark:bg-white transition-all duration-1000 ease-out" style={{ width: isAnimated ? '78%' : '0%' }} />
+              <div className="h-full bg-sky-500 transition-all duration-1000 ease-out delay-100" style={{ width: isAnimated ? '14%' : '0%' }} />
+              <div className="h-full bg-amber-500 transition-all duration-1000 ease-out delay-200" style={{ width: isAnimated ? '8%' : '0%' }} />
             </div>
           </div>
           <div className="mt-2 pt-2 border-t border-neutral-200 dark:border-[#262626] text-[10px] text-neutral-500 dark:text-neutral-400 flex items-center justify-between">
@@ -644,7 +650,7 @@ export default function RegimesPage() {
             {/* Stacked Bars Grid */}
             <div className="overflow-x-auto pb-1">
               <div className="grid grid-cols-6 gap-2 pt-2 min-w-[340px]">
-                {evolutionSteps.map((step) => (
+                {evolutionSteps.map((step, colIdx) => (
                   <div key={step.time} className="flex flex-col items-center">
                     {/* Optional Peak Badge */}
                     <div className="h-5 flex items-center justify-center">
@@ -658,13 +664,25 @@ export default function RegimesPage() {
                     {/* Stacked Vertical Bar */}
                     <div className="w-full max-w-[46px] h-36 bg-neutral-100 dark:bg-[#0A0A0A] rounded overflow-hidden flex flex-col-reverse border border-neutral-200 dark:border-[#262626] my-1">
                       {/* Active (Bottom) */}
-                      <div className="w-full bg-emerald-500" style={{ height: `${step.active}%` }} />
+                      <div
+                        className="w-full bg-emerald-500 transition-all ease-out"
+                        style={{ height: isAnimated ? `${step.active}%` : '0%', transitionDuration: '900ms', transitionDelay: `${colIdx * 80}ms` }}
+                      />
                       {/* Depression */}
-                      <div className="w-full bg-sky-500" style={{ height: `${step.depression}%` }} />
+                      <div
+                        className="w-full bg-sky-500 transition-all ease-out"
+                        style={{ height: isAnimated ? `${step.depression}%` : '0%', transitionDuration: '900ms', transitionDelay: `${colIdx * 80 + 60}ms` }}
+                      />
                       {/* Orographic */}
-                      <div className="w-full bg-amber-500" style={{ height: `${step.orographic}%` }} />
+                      <div
+                        className="w-full bg-amber-500 transition-all ease-out"
+                        style={{ height: isAnimated ? `${step.orographic}%` : '0%', transitionDuration: '900ms', transitionDelay: `${colIdx * 80 + 120}ms` }}
+                      />
                       {/* Break (Top) */}
-                      <div className="w-full bg-rose-500" style={{ height: `${step.break}%` }} />
+                      <div
+                        className="w-full bg-rose-500 transition-all ease-out"
+                        style={{ height: isAnimated ? `${step.break}%` : '0%', transitionDuration: '900ms', transitionDelay: `${colIdx * 80 + 180}ms` }}
+                      />
                     </div>
 
                     {/* Timestep Label */}
@@ -678,7 +696,7 @@ export default function RegimesPage() {
             {/* Bottom Annotation */}
             <div className="mt-3 pt-2 border-t border-neutral-200 dark:border-[#262626] flex items-center justify-between text-[10px] text-neutral-500 dark:text-neutral-400 font-mono">
               <div className="flex items-center gap-1.5">
-                <span className="text-neutral-900 dark:text-neutral-100 font-bold">ℹ</span>
+                <Info size={11} className="text-neutral-900 dark:text-neutral-100 shrink-0" />
                 <span>Ensemble spread indicates regime bifurcation at +64h as BoB depression forms (38 of 51 members agree).</span>
               </div>
               <span className="text-neutral-800 dark:text-neutral-200 font-semibold">Brier Score: 0.118</span>
@@ -767,8 +785,8 @@ export default function RegimesPage() {
                   </div>
                   <div className="w-full bg-neutral-200 dark:bg-[#222222] rounded-full h-1.5 overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${w.color}`}
-                      style={{ width: `${w.weight * 100}%` }}
+                      className={`h-full rounded-full ${w.color} transition-all duration-1000 ease-out`}
+                      style={{ width: isAnimated ? `${w.weight * 100}%` : '0%' }}
                     />
                   </div>
                 </div>

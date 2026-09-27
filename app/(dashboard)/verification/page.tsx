@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/shared/ui/badge';
-import { ShieldAlert, RefreshCw, Activity, ArrowUpRight, TrendingUp, CheckCircle2, ChevronDown } from '@/shared/ui/icons';
+import { ShieldAlert, RefreshCw, Activity, ArrowUpRight, TrendingUp, CheckCircle2, ChevronDown, Settings } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
 
 export default function VerificationPage() {
@@ -10,6 +10,12 @@ export default function VerificationPage() {
   const [selectedRegime, setSelectedRegime] = useState<string>('Active Monsoon');
   const [selectedThreshold, setSelectedThreshold] = useState<string>('>64.5mm');
   const [selectedLeadTime, setSelectedLeadTime] = useState<string>('24h');
+  const [isAnimated, setIsAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (isLoading || !activeScenario) {
     return (
@@ -24,7 +30,7 @@ export default function VerificationPage() {
   const kpiMetrics = [
     {
       label: 'RMSE (ERROR)',
-      gainBadge: '↓ 18.4% GAIN',
+      gainBadge: '-18.4% GAIN',
       value: '35.1',
       unit: 'mm',
       rawNwp: '42.8',
@@ -57,7 +63,7 @@ export default function VerificationPage() {
     },
     {
       label: 'FAR (FALSE ALARMS)',
-      gainBadge: '↓ 35.3% CUT',
+      gainBadge: '-35.3% CUT',
       value: '0.22',
       unit: 'ratio',
       rawNwp: '0.34',
@@ -222,7 +228,8 @@ export default function VerificationPage() {
             onClick={() => alert('Opening Evaluation Configuration Settings...')}
             className="px-3 py-0.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 text-[11px] transition-all"
           >
-            ⚙ Evaluation Config
+            <Settings size={12} className="inline mr-1 shrink-0" />
+            Evaluation Config
           </button>
         </div>
       </div>
@@ -258,8 +265,8 @@ export default function VerificationPage() {
               {/* Thin metric indicator bar */}
               <div className="w-full bg-neutral-100 dark:bg-[#222222] rounded-full h-1 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-neutral-800 dark:bg-white"
-                  style={{ width: `${kpi.progress}%` }}
+                  className="h-full rounded-full bg-neutral-800 dark:bg-white transition-all duration-1000 ease-out"
+                  style={{ width: isAnimated ? `${kpi.progress}%` : '0%' }}
                 />
               </div>
             </div>
@@ -308,7 +315,7 @@ export default function VerificationPage() {
                 {/* Background Frequency Sharpness Histogram Bars */}
                 {reliabilityBins.map((bin) => {
                   const x = 50 + bin.p * 380;
-                  const barH = (bin.hist / 70) * 120;
+                  const barH = isAnimated ? (bin.hist / 70) * 120 : 0;
                   return (
                     <rect
                       key={bin.p}
@@ -319,6 +326,7 @@ export default function VerificationPage() {
                       fill="#0284c7"
                       fillOpacity="0.15"
                       rx="2"
+                      style={{ transition: 'height 1s ease-out, y 1s ease-out' }}
                     />
                   );
                 })}
@@ -355,6 +363,9 @@ export default function VerificationPage() {
                   fill="none"
                   stroke="#ea580c"
                   strokeWidth="2.5"
+                  strokeDasharray="600"
+                  strokeDashoffset={isAnimated ? 0 : 600}
+                  style={{ transition: 'stroke-dashoffset 1.2s ease-out' }}
                 />
                 {reliabilityBins.map((b) => (
                   <circle
@@ -365,6 +376,7 @@ export default function VerificationPage() {
                     fill="#ea580c"
                     stroke="#ffffff"
                     strokeWidth="1.2"
+                    style={{ opacity: isAnimated ? 1 : 0, transition: 'opacity 0.5s ease-out 1s' }}
                   />
                 ))}
 
@@ -374,6 +386,9 @@ export default function VerificationPage() {
                   fill="none"
                   stroke="#10b981"
                   strokeWidth="3"
+                  strokeDasharray="600"
+                  strokeDashoffset={isAnimated ? 0 : 600}
+                  style={{ transition: 'stroke-dashoffset 1.2s ease-out 0.2s' }}
                 />
                 {reliabilityBins.map((b) => (
                   <circle
@@ -384,6 +399,7 @@ export default function VerificationPage() {
                     fill="#10b981"
                     stroke="#ffffff"
                     strokeWidth="1.5"
+                    style={{ opacity: isAnimated ? 1 : 0, transition: 'opacity 0.5s ease-out 1.2s' }}
                   />
                 ))}
               </svg>
@@ -473,7 +489,8 @@ export default function VerificationPage() {
                     ${leadTimePoints.slice().reverse().map((p, i) => `${70 + (4 - i) * 85},${180 - ((p.evrin - 30) / 60) * 150}`).join(' ')}
                   `}
                   fill="#0284c7"
-                  fillOpacity="0.15"
+                  fillOpacity={isAnimated ? 0.15 : 0}
+                  style={{ transition: 'fill-opacity 0.8s ease-out 0.6s' }}
                 />
 
                 {/* GFS Curve (Orange Dashed) */}
@@ -482,7 +499,9 @@ export default function VerificationPage() {
                   fill="none"
                   stroke="#ea580c"
                   strokeWidth="2"
-                  strokeDasharray="4 3"
+                  strokeDasharray="500"
+                  strokeDashoffset={isAnimated ? 0 : 500}
+                  style={{ transition: 'stroke-dashoffset 1s ease-out' }}
                 />
 
                 {/* ECMWF 0.1° Curve (Sky with dots) */}
@@ -491,6 +510,9 @@ export default function VerificationPage() {
                   fill="none"
                   stroke="#0284c7"
                   strokeWidth="2"
+                  strokeDasharray="500"
+                  strokeDashoffset={isAnimated ? 0 : 500}
+                  style={{ transition: 'stroke-dashoffset 1s ease-out 0.1s' }}
                 />
                 {leadTimePoints.map((p, i) => (
                   <circle
@@ -501,6 +523,7 @@ export default function VerificationPage() {
                     fill="#0284c7"
                     stroke="#ffffff"
                     strokeWidth="1.2"
+                    style={{ opacity: isAnimated ? 1 : 0, transition: 'opacity 0.4s ease-out 1s' }}
                   />
                 ))}
 
@@ -510,6 +533,9 @@ export default function VerificationPage() {
                   fill="none"
                   stroke="#10b981"
                   strokeWidth="3"
+                  strokeDasharray="500"
+                  strokeDashoffset={isAnimated ? 0 : 500}
+                  style={{ transition: 'stroke-dashoffset 1s ease-out 0.2s' }}
                 />
                 {leadTimePoints.map((p, i) => (
                   <circle
@@ -520,6 +546,7 @@ export default function VerificationPage() {
                     fill="#10b981"
                     stroke="#ffffff"
                     strokeWidth="1.5"
+                    style={{ opacity: isAnimated ? 1 : 0, transition: 'opacity 0.4s ease-out 1.1s' }}
                   />
                 ))}
 

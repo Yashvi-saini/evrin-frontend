@@ -1,12 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/shared/ui/badge';
 import { useForecastRepository } from '@/entities/repository';
 import { formatPercentage } from '@/shared/lib/utils';
 
 export function RegimePanelWidget() {
   const { activeScenario } = useForecastRepository();
+  const [isAnimated, setIsAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (!activeScenario) return null;
 
   const { regimeDiagnosis } = activeScenario;
@@ -50,8 +57,8 @@ export function RegimePanelWidget() {
             <span className="w-24 sm:w-36 text-neutral-600 dark:text-neutral-400 truncate shrink-0">{r.name}</span>
             <div className="flex-1 bg-neutral-100 dark:bg-[#1f1f1f] rounded-full h-1.5 overflow-hidden">
               <div
-                className={`h-full rounded-full ${r.color}`}
-                style={{ width: `${r.prob}%` }}
+                className={`h-full rounded-full transition-all duration-1000 ease-out ${r.color}`}
+                style={{ width: isAnimated ? `${r.prob}%` : '0%' }}
               />
             </div>
             <span className="w-8 text-right text-neutral-800 dark:text-neutral-200 font-medium shrink-0">{r.prob}%</span>
