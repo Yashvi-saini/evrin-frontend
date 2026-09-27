@@ -7,6 +7,7 @@ import { MapLegend } from './MapLegend';
 import { useForecastRepository } from '@/entities/repository';
 import { formatPercentage } from '@/shared/lib/utils';
 import { RefreshCw } from '@/shared/ui/icons';
+import { useTheme } from '@/shared/lib/theme';
 
 // Declare Leaflet global type
 declare global {
@@ -18,6 +19,12 @@ declare global {
 export interface IndiaMapProps {
   onSelectDistrict?: (districtId: string) => void;
 }
+
+// Basemap Tile Providers
+const ESRI_DARK_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+const ESRI_LIGHT_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+const OSM_TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const SATELLITE_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 
 // Detailed India National Boundary Geo-Coordinates [Lat, Lng]
 const INDIA_BORDER_COORDINATES: [number, number][] = [
@@ -39,9 +46,10 @@ const INDIA_BORDER_COORDINATES: [number, number][] = [
 ];
 
 export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
+  const { theme } = useTheme();
   const { activeScenario } = useForecastRepository();
   const [activeLayer, setActiveLayer] = useState<MapLayerId>('evrin-corrected');
-  const [baseMapType, setBaseMapType] = useState<'dark' | 'osm' | 'satellite'>('dark');
+  const [baseMapType, setBaseMapType] = useState<'gis' | 'osm' | 'satellite'>('gis');
   const [activeTimeHorizon, setActiveTimeHorizon] = useState<string>('+06Z');
   const [isLeafletReady, setIsLeafletReady] = useState(false);
 
@@ -194,8 +202,38 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
     document.body.appendChild(script);
   }, []);
 
-  // Switch Tile Layer: Dark GIS / OpenStreetMap / Satellite
-  const setTileSource = (type: 'dark' | 'osm' | 'satellite') => {
+  const getTileConfig = (type: 'gis' | 'osm' | 'satellite', currentTheme: 'light' | 'dark') => {
+    if (type === 'satellite') {
+      return {
+        url: SATELLITE_TILES,
+        attribution: '&copy; Esri &mdash; Satellite Observation',
+        maxZoom: 17,
+      };
+    }
+    if (type === 'osm') {
+      return {
+        url: OSM_TILES,
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19,
+      };
+    }
+    // GIS Base Canvas (Dynamic based on theme)
+    if (currentTheme === 'light') {
+      return {
+        url: ESRI_LIGHT_TILES,
+        attribution: '&copy; Esri &mdash; National Meteorological Grid (Light GIS)',
+        maxZoom: 16,
+      };
+    }
+    return {
+      url: ESRI_DARK_TILES,
+      attribution: '&copy; Esri &mdash; National Meteorological Grid (Dark GIS)',
+      maxZoom: 16,
+    };
+  };
+
+  // Switch Tile Layer: GIS / OpenStreetMap / Satellite
+  const setTileSource = (type: 'gis' | 'osm' | 'satellite') => {
     if (!mapInstanceRef.current || !window.L) return;
     const L = window.L;
     const map = mapInstanceRef.current;
@@ -204,31 +242,27 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
       map.removeLayer(tileLayerRef.current);
     }
 
-    let tileUrl = '';
-    let attribution = '';
-    let maxZoom = 18;
-
-    if (type === 'satellite') {
-      // High-res Esri World Imagery (Real Satellite Photography)
-      tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-      attribution = '&copy; Esri &mdash; Satellite Observation';
-      maxZoom = 17;
-    } else if (type === 'osm') {
-      // Official OpenStreetMap (OpenSG / Detailed Cartography)
-      tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-      attribution = '&copy; OpenStreetMap contributors';
-      maxZoom = 19;
-    } else {
-      // Default: Esri World Dark Gray Base
-      tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
-      attribution = '&copy; Esri &mdash; National Meteorological Grid';
-      maxZoom = 16;
-    }
-
-    const newLayer = L.tileLayer(tileUrl, { attribution, maxZoom }).addTo(map);
+    const { url, attribution, maxZoom } = getTileConfig(type, theme);
+    const newLayer = L.tileLayer(url, { attribution, maxZoom }).addTo(map);
+    if (newLayer.bringToBack) newLayer.bringToBack();
     tileLayerRef.current = newLayer;
     setBaseMapType(type);
   };
+
+  // Automatically switch GIS base map when theme toggles
+  useEffect(() => {
+    if (baseMapType === 'gis' && mapInstanceRef.current && window.L) {
+      const L = window.L;
+      const map = mapInstanceRef.current;
+      if (tileLayerRef.current) {
+        map.removeLayer(tileLayerRef.current);
+      }
+      const { url, attribution, maxZoom } = getTileConfig('gis', theme);
+      const newLayer = L.tileLayer(url, { attribution, maxZoom }).addTo(map);
+      if (newLayer.bringToBack) newLayer.bringToBack();
+      tileLayerRef.current = newLayer;
+    }
+  }, [theme, baseMapType]);
 
   // Initialize Leaflet Map
   useEffect(() => {
@@ -245,14 +279,9 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
       zoomControl: false,
     });
 
-    // Default to Esri World Dark Gray Base
-    const baseLayer = L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: '&copy; Esri &mdash; National Meteorological Grid',
-        maxZoom: 16,
-      }
-    ).addTo(map);
+    // Theme-Aware Default GIS Base Layer
+    const { url, attribution, maxZoom } = getTileConfig('gis', theme);
+    const baseLayer = L.tileLayer(url, { attribution, maxZoom }).addTo(map);
     tileLayerRef.current = baseLayer;
 
     // Zoom controls top right
@@ -555,21 +584,23 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
         }).addTo(layerGroup);
       }
 
+      const isDark = theme === 'dark';
+
       // Dynamic Station Callout Label
       const labelIcon = L.divIcon({
         className: 'station-callout-icon',
         html: `
           <div style="
-            background: #141414;
-            border: 1px solid ${isTarget ? '#06b6d4' : '#262626'};
-            color: #ededed;
+            background: ${isDark ? '#141414' : '#ffffff'};
+            border: 1px solid ${isTarget ? '#06b6d4' : (isDark ? '#262626' : '#cbd5e1')};
+            color: ${isDark ? '#ededed' : '#0f172a'};
             font-family: inherit;
             font-size: 10px;
             font-weight: 600;
             padding: 3px 8px;
             border-radius: 9999px;
             white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            box-shadow: ${isDark ? '0 2px 6px rgba(0,0,0,0.4)' : '0 2px 6px rgba(0,0,0,0.1)'};
             transform: translate(12px, -12px);
             cursor: pointer;
             display: inline-flex;
@@ -597,31 +628,31 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
 
       // Bind Rich Popup
       marker.bindPopup(`
-        <div style="font-family: monospace; font-size: 11px; color: #ededed; background: #141414; padding: 4px; min-width: 170px;">
-          <div style="font-weight: bold; font-size: 13px; color: #ffffff; border-bottom: 1px solid #262626; padding-bottom: 4px; margin-bottom: 6px;">
+        <div style="font-family: inherit; font-size: 11px; color: ${isDark ? '#ededed' : '#0f172a'}; background: ${isDark ? '#141414' : '#ffffff'}; padding: 4px; min-width: 170px;">
+          <div style="font-weight: bold; font-size: 13px; color: ${isDark ? '#ffffff' : '#0f172a'}; border-bottom: 1px solid ${isDark ? '#262626' : '#e2e8f0'}; padding-bottom: 4px; margin-bottom: 6px;">
             ${station.name} (${station.state})
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-            <span style="color: #94a3b8;">RAW NWP:</span>
+            <span style="color: ${isDark ? '#94a3b8' : '#64748b'};">RAW NWP:</span>
             <span style="font-weight: bold;">${(station.rawMm * currentMult).toFixed(1)} mm</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-            <span style="color: #94a3b8;">EVRIN AI:</span>
-            <span style="font-weight: bold; color: #34d399;">${(station.evrinMm * currentMult).toFixed(1)} mm</span>
+            <span style="color: ${isDark ? '#94a3b8' : '#64748b'};">EVRIN AI:</span>
+            <span style="font-weight: bold; color: #10b981;">${(station.evrinMm * currentMult).toFixed(1)} mm</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-            <span style="color: #94a3b8;">BIAS DELTA:</span>
-            <span style="font-weight: bold; color: ${station.deltaMm >= 0 ? '#38bdf8' : '#f97316'};">
+            <span style="color: ${isDark ? '#94a3b8' : '#64748b'};">BIAS DELTA:</span>
+            <span style="font-weight: bold; color: ${station.deltaMm >= 0 ? '#0284c7' : '#ea580c'};">
               ${station.deltaMm >= 0 ? '+' : ''}${(station.deltaMm * currentMult).toFixed(1)} mm
             </span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
-            <span style="color: #94a3b8;">HEAVY PROB:</span>
-            <span style="font-weight: bold; color: #f87171;">${(station.heavyProb * 100).toFixed(0)}%</span>
+            <span style="color: ${isDark ? '#94a3b8' : '#64748b'};">HEAVY PROB:</span>
+            <span style="font-weight: bold; color: #ef4444;">${(station.heavyProb * 100).toFixed(0)}%</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
-            <span style="color: #94a3b8;">REGIME:</span>
-            <span style="font-weight: bold; color: #2dd4bf;">${station.regime}</span>
+            <span style="color: ${isDark ? '#94a3b8' : '#64748b'};">REGIME:</span>
+            <span style="font-weight: bold; color: #0d9488;">${station.regime}</span>
           </div>
         </div>
       `);
@@ -634,7 +665,7 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
       ];
       map.flyTo(targetCoords, 6, { duration: 1.0 });
     }
-  }, [activeScenario, activeLayer, stations, activeTimeHorizon, onSelectDistrict]);
+  }, [activeScenario, activeLayer, stations, activeTimeHorizon, onSelectDistrict, theme]);
 
   const timeHorizons = ['00Z', '+06Z', '+12Z', '+24Z', '+36Z', '+48Z', '+72Z'];
 
@@ -645,26 +676,26 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
         {/* Layer Selector Pills with Vercel black & gray style */}
         <MapLayerControl activeLayer={activeLayer} onLayerChange={setActiveLayer} />
 
-        {/* Free Basemap Switcher: Dark GIS, OpenStreetMap, Satellite */}
+        {/* Free Basemap Switcher: GIS Canvas (Light/Dark), OpenStreetMap, Satellite */}
         <div className="flex items-center gap-1.5 text-[11px]">
           <span className="text-neutral-500 dark:text-neutral-400 font-semibold uppercase tracking-wider text-[10px] px-1 hidden sm:inline">
             MAP VIEW:
           </span>
           <button
-            onClick={() => setTileSource('dark')}
+            onClick={() => setTileSource('gis')}
             className={`px-3 py-1 rounded-full text-xs transition-colors border ${
-              baseMapType === 'dark'
-                ? 'bg-[#1A8FCB] dark:bg-white text-white dark:text-black border-transparent font-medium'
+              baseMapType === 'gis'
+                ? 'bg-[#1A8FCB] dark:bg-white text-white dark:text-black border-[#1A8FCB] dark:border-white font-medium'
                 : 'bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1f1f1f] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white border-neutral-300 dark:border-[#262626]'
             }`}
           >
-            Dark GIS
+            {theme === 'dark' ? 'Dark GIS' : 'Light GIS'}
           </button>
           <button
             onClick={() => setTileSource('osm')}
             className={`px-3 py-1 rounded-full text-xs transition-colors border ${
               baseMapType === 'osm'
-                ? 'bg-[#1A8FCB] dark:bg-white text-white dark:text-black border-transparent font-medium'
+                ? 'bg-[#1A8FCB] dark:bg-white text-white dark:text-black border-[#1A8FCB] dark:border-white font-medium'
                 : 'bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1f1f1f] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white border-neutral-300 dark:border-[#262626]'
             }`}
           >
@@ -674,7 +705,7 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
             onClick={() => setTileSource('satellite')}
             className={`px-3 py-1 rounded-full text-xs transition-colors border ${
               baseMapType === 'satellite'
-                ? 'bg-[#1A8FCB] dark:bg-white text-white dark:text-black border-transparent font-medium'
+                ? 'bg-[#1A8FCB] dark:bg-white text-white dark:text-black border-[#1A8FCB] dark:border-white font-medium'
                 : 'bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1f1f1f] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white border-neutral-300 dark:border-[#262626]'
             }`}
           >
@@ -683,30 +714,33 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
         </div>
       </div>
 
-      {/* Floating Active Layer Badge Indicator inside Map */}
-      <div className="absolute top-14 left-4 z-10 pointer-events-none">
-        <div className="px-3 py-1 rounded-full bg-white/90 dark:bg-[#141414]/90 backdrop-blur border border-neutral-200 dark:border-[#262626] text-[10px] text-neutral-800 dark:text-neutral-200 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          <span className="text-neutral-500 dark:text-neutral-400 uppercase">ACTIVE OVERLAY:</span>
-          <span className="text-neutral-900 dark:text-white font-semibold uppercase tracking-wider">{activeLayer.replace('-', ' ')}</span>
-          <span className="text-neutral-400 dark:text-neutral-600">|</span>
-          <span className="text-neutral-700 dark:text-neutral-300">{activeTimeHorizon} HORIZON</span>
+      {/* Map Canvas and In-Map Overlays Container */}
+      <div className="relative flex-1 w-full h-full min-h-[460px] overflow-hidden bg-neutral-100 dark:bg-[#0A0A0A]">
+        {/* Floating Active Layer Badge Indicator inside Map Canvas (safe from header wrapping) */}
+        <div className="absolute top-3 left-3 z-[400] pointer-events-none">
+          <div className="px-3 py-1 rounded-full bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-300 dark:border-[#262626] text-[10px] text-neutral-800 dark:text-neutral-200 flex items-center gap-2 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-neutral-500 dark:text-neutral-400 uppercase font-medium">ACTIVE OVERLAY:</span>
+            <span className="text-neutral-900 dark:text-white font-semibold uppercase tracking-wider">{activeLayer.replace('-', ' ')}</span>
+            <span className="text-neutral-400 dark:text-neutral-600">|</span>
+            <span className="text-neutral-700 dark:text-neutral-300 font-medium">{activeTimeHorizon} HORIZON</span>
+          </div>
         </div>
+
+        {/* Real Geographic Leaflet Map Canvas */}
+        <div
+          ref={mapContainerRef}
+          className="w-full h-full min-h-[460px] z-0"
+        />
+
+        {/* Loading state before Leaflet mounts */}
+        {!isLeafletReady && (
+          <div className="absolute inset-0 z-[500] flex flex-col items-center justify-center bg-white/90 dark:bg-[#0A0A0A]/90 text-neutral-500 gap-3 text-xs">
+            <RefreshCw size={24} className="animate-spin text-neutral-400" />
+            <span>Initializing Operational GIS Cartography...</span>
+          </div>
+        )}
       </div>
-
-      {/* Real Geographic Leaflet Map Canvas */}
-      <div
-        ref={mapContainerRef}
-        className="flex-1 w-full h-full min-h-[460px] z-0 bg-[#0A0A0A]"
-      />
-
-      {/* Loading state before Leaflet mounts */}
-      {!isLeafletReady && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/90 dark:bg-[#0A0A0A]/90 text-neutral-500 gap-3 text-xs">
-          <RefreshCw size={24} className="animate-spin text-neutral-400" />
-          <span>Initializing Operational GIS Cartography...</span>
-        </div>
-      )}
 
       {/* Bottom Floating Bar: Accumulation Legend & Timeline */}
       <div className="p-2.5 border-t border-neutral-200 dark:border-[#262626] bg-neutral-50 dark:bg-[#141414] flex flex-wrap items-center justify-between gap-3 z-10 select-none">

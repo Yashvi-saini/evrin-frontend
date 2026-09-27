@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/shared/ui/badge';
 import { RefreshCw, Wind, Compass, Activity, CheckCircle2, ChevronDown, Layers } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
+import { useTheme } from '@/shared/lib/theme';
 
 declare global {
   interface Window {
@@ -12,12 +13,14 @@ declare global {
 }
 
 export default function RegimesPage() {
+  const { theme } = useTheme();
   const { activeScenario, isLoading } = useForecastRepository();
   const [activeMapMode, setActiveMapMode] = useState<string>('streamlines');
   const [isLeafletReady, setIsLeafletReady] = useState(false);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
+  const tileLayerRef = useRef<any>(null);
 
   // Load Leaflet dynamically
   useEffect(() => {
@@ -56,14 +59,17 @@ export default function RegimesPage() {
       zoomControl: false,
     });
 
-    // Dark GIS Basemap
-    L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: '&copy; Esri &mdash; National Meteorological Regime Grid',
-        maxZoom: 16,
-      }
-    ).addTo(map);
+    // Theme-Aware GIS Basemap
+    const isDark = theme === 'dark';
+    const tileUrl = isDark
+      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+      : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
+    const tileLayer = L.tileLayer(tileUrl, {
+      attribution: '&copy; Esri &mdash; National Meteorological Regime Grid',
+      maxZoom: 16,
+    }).addTo(map);
+    tileLayerRef.current = tileLayer;
 
     // Zoom controls top right
     L.control.zoom({ position: 'topright' }).addTo(map);
@@ -284,6 +290,27 @@ export default function RegimesPage() {
       mapInstanceRef.current = null;
     };
   }, [isLeafletReady]);
+
+  // Dynamically update tile layer when theme changes
+  useEffect(() => {
+    if (mapInstanceRef.current && window.L) {
+      const L = window.L;
+      const map = mapInstanceRef.current;
+      if (tileLayerRef.current) {
+        map.removeLayer(tileLayerRef.current);
+      }
+      const isDark = theme === 'dark';
+      const tileUrl = isDark
+        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+        : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+      const newLayer = L.tileLayer(tileUrl, {
+        attribution: '&copy; Esri &mdash; National Meteorological Regime Grid',
+        maxZoom: 16,
+      }).addTo(map);
+      if (newLayer.bringToBack) newLayer.bringToBack();
+      tileLayerRef.current = newLayer;
+    }
+  }, [theme]);
 
   // 5-Day Regime Evolution Timesteps matching Image 8 (media_1790525763019.png)
   const evolutionSteps = [

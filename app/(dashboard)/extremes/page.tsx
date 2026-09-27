@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/shared/ui/badge';
 import { AlertTriangle, RefreshCw, ShieldAlert, Users, Clock, Wind, ArrowUpRight, Zap, CheckCircle2 } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
+import { useTheme } from '@/shared/lib/theme';
 
 declare global {
   interface Window {
@@ -12,6 +13,7 @@ declare global {
 }
 
 export default function ExtremesPage() {
+  const { theme } = useTheme();
   const { activeScenario, isLoading } = useForecastRepository();
   const [selectedThreshold, setSelectedThreshold] = useState<string>('heavy');
   const [selectedCutoff, setSelectedCutoff] = useState<string>('64.5');
@@ -20,6 +22,7 @@ export default function ExtremesPage() {
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
+  const tileLayerRef = useRef<any>(null);
 
   // Load Leaflet dynamically
   useEffect(() => {
@@ -58,14 +61,17 @@ export default function ExtremesPage() {
       zoomControl: false,
     });
 
-    // Dark GIS Basemap
-    L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: '&copy; Esri &mdash; National Meteorological Hazard Grid',
-        maxZoom: 16,
-      }
-    ).addTo(map);
+    // Theme-Aware GIS Basemap
+    const isDark = theme === 'dark';
+    const tileUrl = isDark
+      ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+      : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
+    const tileLayer = L.tileLayer(tileUrl, {
+      attribution: '&copy; Esri &mdash; National Meteorological Hazard Grid',
+      maxZoom: 16,
+    }).addTo(map);
+    tileLayerRef.current = tileLayer;
 
     // Zoom controls top right
     L.control.zoom({ position: 'topright' }).addTo(map);
@@ -337,6 +343,27 @@ export default function ExtremesPage() {
       mapInstanceRef.current = null;
     };
   }, [isLeafletReady]);
+
+  // Dynamically update tile layer when theme changes
+  useEffect(() => {
+    if (mapInstanceRef.current && window.L) {
+      const L = window.L;
+      const map = mapInstanceRef.current;
+      if (tileLayerRef.current) {
+        map.removeLayer(tileLayerRef.current);
+      }
+      const isDark = theme === 'dark';
+      const tileUrl = isDark
+        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+        : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+      const newLayer = L.tileLayer(tileUrl, {
+        attribution: '&copy; Esri &mdash; National Meteorological Hazard Grid',
+        maxZoom: 16,
+      }).addTo(map);
+      if (newLayer.bringToBack) newLayer.bringToBack();
+      tileLayerRef.current = newLayer;
+    }
+  }, [theme]);
 
   const thresholdPills = [
     { id: 'all', label: 'All Extremes', color: 'text-slate-300 border-slate-700' },
