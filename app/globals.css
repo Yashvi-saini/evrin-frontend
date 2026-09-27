@@ -221,3 +221,146 @@ html:not(.dark) .leaflet-control-attribution {
   color: #94a3b8 !important;
   font-size: 9px !important;
 }
+
+/* ============================================================
+   PRINT STYLES — Full-page PDF / Print export
+   Removes all clipping, expands scrollable containers,
+   hides navigation chrome (sidebar, topbar, buttons).
+   ============================================================ */
+@media print {
+  /* Force full-color printing */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Remove body constraints */
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+
+  /* The root flex container: unwrap from h-screen */
+  body > div,
+  #__next,
+  [data-nextjs-scroll-focus-boundary] {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Hide sidebar and topbar completely */
+  aside,
+  header,
+  nav,
+  [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Make the main flex shell expand */
+  .flex.h-screen.w-screen {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* The right-side content column */
+  .flex.flex-col.flex-1 {
+    overflow: visible !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+
+  /* Main content area — expand, no scroll clipping */
+  main,
+  main.flex-1 {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 12px !important;
+  }
+
+  /* Remove overflow-hidden from every card/container */
+  [class*="overflow-hidden"],
+  [class*="overflow-y-auto"],
+  [class*="overflow-y-scroll"],
+  [class*="overflow-x-auto"] {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Keep SVG charts visible */
+  svg {
+    overflow: visible !important;
+  }
+
+  /* Page break hints */
+  .page-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* Hide interactive controls that make no sense in print */
+  button,
+  select,
+  [role="button"] {
+    display: none !important;
+  }
+
+  /* But keep badges and pill labels */
+  [class*="rounded-full"][class*="px-"] {
+    display: inline-flex !important;
+  }
+
+  /* Ensure grids lay out properly for print */
+  [class*="grid"] {
+    display: grid !important;
+  }
+
+  /* Prevent orphaned headings */
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Cards: remove shadow, keep borders */
+  [class*="shadow"] {
+    box-shadow: none !important;
+  }
+
+  /* Print header watermark */
+  body::before {
+    content: "EVRIN OPS — Regime-Aware Meteorological Intelligence";
+    display: block;
+    font-size: 9px;
+    color: #94a3b8;
+    text-align: left;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 8px;
+    font-family: sans-serif;
+  }
+
+  body::after {
+    content: attr(data-print-url);
+    display: block;
+    font-size: 8px;
+    color: #94a3b8;
+    text-align: right;
+    padding-top: 4px;
+    font-family: sans-serif;
+  }
+
+  /* Leaflet map: keep visible, fixed height */
+  .leaflet-container {
+    height: 320px !important;
+    overflow: hidden !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+

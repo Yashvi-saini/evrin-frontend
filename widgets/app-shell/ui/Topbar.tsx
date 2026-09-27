@@ -40,14 +40,15 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
 
   const handlePrint = () => {
     setIsExportOpen(false);
+    document.body.setAttribute('data-print-url', window.location.href);
     window.print();
   };
 
   const handleExportPDF = () => {
     setIsExportOpen(false);
-    // Trigger browser print-to-PDF dialog
     const originalTitle = document.title;
     document.title = `EVRIN-OPS_Report_${new Date().toISOString().split('T')[0]}`;
+    document.body.setAttribute('data-print-url', window.location.href);
     window.print();
     document.title = originalTitle;
   };
