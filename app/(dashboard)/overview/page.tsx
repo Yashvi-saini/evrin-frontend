@@ -3,9 +3,10 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
-import { CloudRain, Compass, AlertTriangle, ShieldAlert, ArrowUpRight, ArrowDownRight, RefreshCw } from '@/shared/ui/icons';
+import { CloudRain, Compass, AlertTriangle, ArrowUpRight, ArrowDownRight, RefreshCw } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
 import { formatRainfall, formatPercentage } from '@/shared/lib/utils';
+import { IndiaMap } from '@/widgets/forecast-map';
 
 export default function OverviewPage() {
   const { activeScenario, isLoading, isProcessingEvrin } = useForecastRepository();
@@ -24,7 +25,7 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-6">
-      {/* Processing Overlay Notice when Running EVRIN */}
+      {/* Processing Banner when Running EVRIN */}
       {isProcessingEvrin && (
         <div className="p-3 rounded-lg bg-sky-950/60 border border-sky-800/80 text-xs text-sky-200 flex items-center justify-between animate-pulse">
           <div className="flex items-center gap-2">
@@ -107,35 +108,12 @@ export default function OverviewPage() {
 
       {/* Main Map & Inspection Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Map Area */}
-        <Card className="lg:col-span-2 min-h-[480px] flex flex-col">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Compass size={14} className="text-sky-400" />
-              <span>India Rainfall Intelligence Map (GIS View)</span>
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              <Badge variant="info">Layer: EVRIN Corrected</Badge>
-              <Badge variant="regime">{activeScenario.selectedDistrict.state}</Badge>
-            </div>
-          </CardHeader>
-          <div className="flex-1 rounded-md border border-slate-800/80 bg-slate-950/70 flex flex-col items-center justify-center p-8 text-center">
-            <Compass size={44} className="text-sky-500/60 animate-pulse mb-3" />
-            <div className="text-sm font-semibold text-slate-200">
-              {activeScenario.name} Simulation — {activeScenario.selectedDistrict.name}, {activeScenario.selectedDistrict.state}
-            </div>
-            <div className="text-xs text-slate-400 max-w-sm mt-1 font-mono">
-              Coordinates: {activeScenario.selectedDistrict.coordinates.lat}°N, {activeScenario.selectedDistrict.coordinates.lng}°E
-            </div>
-            <div className="mt-4 flex gap-2">
-              <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">
-                Valid: {forecast.validTime}
-              </span>
-            </div>
-          </div>
-        </Card>
+        {/* Interactive Scientific GIS Map Area */}
+        <div className="lg:col-span-2 min-h-[540px]">
+          <IndiaMap />
+        </div>
 
-        {/* Target Inspection Panel */}
+        {/* Target Inspection & Explainability Panel */}
         <div className="space-y-4">
           <Card>
             <CardHeader>
