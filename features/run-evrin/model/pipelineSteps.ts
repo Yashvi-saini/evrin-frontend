@@ -1,0 +1,60 @@
+import { PipelineStep } from './types';
+
+export const INITIAL_PIPELINE_STEPS: PipelineStep[] = [
+  {
+    id: 'step-1',
+    order: 1,
+    title: 'Loading NWP forecast',
+    subtext: 'Ingesting 00z IMD-GFS / NCUM 12km gridded precipitation & geopotential fields',
+    durationMs: 400,
+    status: 'pending',
+  },
+  {
+    id: 'step-2',
+    order: 2,
+    title: 'Extracting atmospheric features',
+    subtext: 'Calculating 850hPa specific humidity flux, vorticity, and trough axis orientation',
+    durationMs: 450,
+    status: 'pending',
+  },
+  {
+    id: 'step-3',
+    order: 3,
+    title: 'Detecting weather regime',
+    subtext: 'Running synoptic AI classifier to determine active monsoon / depression / break state',
+    durationMs: 500,
+    status: 'pending',
+  },
+  {
+    id: 'step-4',
+    order: 4,
+    title: 'Selecting correction strategy',
+    subtext: 'Loading regime-specific neural bias correction weights for prevailing synoptic state',
+    durationMs: 400,
+    status: 'pending',
+  },
+  {
+    id: 'step-5',
+    order: 5,
+    title: 'Calibrating extreme rainfall',
+    subtext: 'Applying quantile regression & Extreme Value Theory (EVT) threshold scaling',
+    durationMs: 450,
+    status: 'pending',
+  },
+  {
+    id: 'step-6',
+    order: 6,
+    title: 'Estimating uncertainty',
+    subtext: 'Synthesizing P10–P90 ensemble quantile dispersion and confidence grade',
+    durationMs: 400,
+    status: 'pending',
+  },
+  {
+    id: 'step-7',
+    order: 7,
+    title: 'Generating EVRIN forecast',
+    subtext: 'Assembling calibrated district guidance, exceedance probabilities & explainability drivers',
+    durationMs: 350,
+    status: 'pending',
+  },
+];
