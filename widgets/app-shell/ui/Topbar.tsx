@@ -55,22 +55,27 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
 
   const handleExportCSV = () => {
     setIsExportOpen(false);
-    // Build a CSV from district forecast data
-    const scenarioName = activeScenario?.name ?? 'EVRIN_Export';
-    const districts = activeScenario?.forecast?.districts ?? [];
-    const rows = [
-      ['District', 'Sub-Region', 'Regime', 'Raw NWP (mm)', 'EVRIN MoE (mm)', 'Delta (mm)', 'Confidence (%)'],
-      ...districts.map((d: any) => [
-        d.name ?? '',
-        d.subRegion ?? '',
-        d.regime ?? '',
-        d.rawNwp ?? '',
-        d.evrinMoe ?? '',
-        d.delta ?? '',
-        d.confidence ?? '',
-      ]),
+    // Build a CSV from the active scenario forecast data
+    const rows: string[][] = [
+      ['District', 'Sub-Region', 'Valid Time', 'Regime', 'Raw NWP 24h (mm)', 'EVRIN MoE 24h (mm)', 'Raw NWP 48h (mm)', 'EVRIN MoE 48h (mm)', 'Forecast Horizon (h)'],
     ];
-    const csvContent = rows.map((r) => r.join(',')).join('\n');
+
+    if (activeScenario?.forecast) {
+      const f = activeScenario.forecast;
+      rows.push([
+        f.district?.name ?? activeScenario.selectedDistrict?.name ?? '',
+        f.district?.state ?? '',
+        f.validTime ?? '',
+        f.regimeContext ?? '',
+        String(f.raw?.rainfall24h ?? ''),
+        String(f.corrected?.rainfall24h ?? ''),
+        String(f.raw?.rainfall48h ?? ''),
+        String(f.corrected?.rainfall48h ?? ''),
+        String(f.forecastHorizonHours ?? ''),
+      ]);
+    }
+
+    const csvContent = rows.map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
