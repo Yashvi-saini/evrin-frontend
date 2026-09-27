@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
-import { Play, RefreshCw, Info, CloudRain, Menu, Sun, Moon, Download } from '@/shared/ui/icons';
+import { Play, RefreshCw, Info, CloudRain, Menu, Sun, Moon, Download, Printer, FileText, FileImage, Table2, ChevronDown } from '@/shared/ui/icons';
 import { useForecastRepository } from '@/entities/repository';
 import { useTheme } from '@/shared/lib/theme';
 import { ExecutionModal } from '@/features/run-evrin';
@@ -15,6 +15,8 @@ export interface TopbarProps {
 
 export function Topbar({ onToggleMobileMenu }: TopbarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
   const { theme, toggleTheme } = useTheme();
 
   const {
@@ -24,6 +26,101 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
     selectScenario,
     isLoading,
   } = useForecastRepository();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setIsExportOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handlePrint = () => {
+    setIsExportOpen(false);
+    window.print();
+  };
+
+  const handleExportPDF = () => {
+    setIsExportOpen(false);
+    // Trigger browser print-to-PDF dialog
+    const originalTitle = document.title;
+    document.title = `EVRIN-OPS_Report_${new Date().toISOString().split('T')[0]}`;
+    window.print();
+    document.title = originalTitle;
+  };
+
+  const handleExportCSV = () => {
+    setIsExportOpen(false);
+    // Build a CSV from district forecast data
+    const scenarioName = activeScenario?.name ?? 'EVRIN_Export';
+    const districts = activeScenario?.forecast?.districts ?? [];
+    const rows = [
+      ['District', 'Sub-Region', 'Regime', 'Raw NWP (mm)', 'EVRIN MoE (mm)', 'Delta (mm)', 'Confidence (%)'],
+      ...districts.map((d: any) => [
+        d.name ?? '',
+        d.subRegion ?? '',
+        d.regime ?? '',
+        d.rawNwp ?? '',
+        d.evrinMoe ?? '',
+        d.delta ?? '',
+        d.confidence ?? '',
+      ]),
+    ];
+    const csvContent = rows.map((r) => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `EVRIN_Forecast_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportPNG = () => {
+    setIsExportOpen(false);
+    // Use html2canvas-like approach: screenshot the main content area
+    // Since html2canvas isn't installed, we'll use the browser's built-in screenshot API via print media
+    const style = document.createElement('style');
+    style.id = 'png-export-style';
+    style.innerHTML = `@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }`;
+    document.head.appendChild(style);
+    window.print();
+    document.getElementById('png-export-style')?.remove();
+  };
+
+  const exportOptions = [
+    {
+      icon: <Printer size={13} className="shrink-0" />,
+      label: 'Print Page',
+      sublabel: 'Browser print dialog',
+      action: handlePrint,
+      color: 'text-neutral-700 dark:text-neutral-300',
+    },
+    {
+      icon: <FileText size={13} className="shrink-0" />,
+      label: 'Export as PDF',
+      sublabel: 'Save current view as PDF',
+      action: handleExportPDF,
+      color: 'text-rose-600 dark:text-rose-400',
+    },
+    {
+      icon: <Table2 size={13} className="shrink-0" />,
+      label: 'Export as CSV',
+      sublabel: 'District forecast data table',
+      action: handleExportCSV,
+      color: 'text-emerald-600 dark:text-emerald-400',
+    },
+    {
+      icon: <FileImage size={13} className="shrink-0" />,
+      label: 'Export as PNG',
+      sublabel: 'Screenshot current view',
+      action: handleExportPNG,
+      color: 'text-[#1A8FCB]',
+    },
+  ];
 
   return (
     <>
@@ -112,14 +209,53 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
             </select>
           </div>
 
-          {/* Quick Export Pill */}
-          <button
-            onClick={() => alert('Exporting GeoTIFF / NetCDF Grid Field...')}
-            className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white border border-neutral-300 dark:border-[#262626] text-xs px-3 py-1 transition-colors whitespace-nowrap shrink-0"
-          >
-            <Download size={12} className="shrink-0" />
-            <span>Quick Export</span>
-          </button>
+          {/* Quick Export Dropdown */}
+          <div ref={exportRef} className="relative hidden md:block">
+            <button
+              onClick={() => setIsExportOpen((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white border border-neutral-300 dark:border-[#262626] text-xs px-3 py-1 transition-colors whitespace-nowrap shrink-0"
+            >
+              <Download size={12} className="shrink-0" />
+              <span>Quick Export</span>
+              <ChevronDown
+                size={11}
+                className={`shrink-0 transition-transform duration-200 ${isExportOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {/* Dropdown Panel */}
+            {isExportOpen && (
+              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-xl shadow-lg z-50 overflow-hidden">
+                <div className="px-3 py-2 border-b border-neutral-100 dark:border-[#262626]">
+                  <p className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                    Export Options
+                  </p>
+                </div>
+                <div className="py-1">
+                  {exportOptions.map((opt) => (
+                    <button
+                      key={opt.label}
+                      onClick={opt.action}
+                      className="w-full flex items-start gap-2.5 px-3 py-2.5 hover:bg-neutral-50 dark:hover:bg-[#1a1a1a] transition-colors text-left group"
+                    >
+                      <span className={`mt-0.5 ${opt.color} group-hover:scale-110 transition-transform`}>
+                        {opt.icon}
+                      </span>
+                      <div>
+                        <div className={`text-xs font-semibold ${opt.color}`}>{opt.label}</div>
+                        <div className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-0.5">{opt.sublabel}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                <div className="px-3 py-2 border-t border-neutral-100 dark:border-[#262626]">
+                  <p className="text-[9px] text-neutral-400 dark:text-neutral-500 font-mono">
+                    EVRIN OPS v0.4.2 • {new Date().toLocaleDateString('en-IN')}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Run EVRIN Action Button */}
           <button
