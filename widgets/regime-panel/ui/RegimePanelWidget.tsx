@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Badge } from '@/shared/ui/badge';
-import { Progress } from '@/shared/ui/progress';
 import { useForecastRepository } from '@/entities/repository';
 import { formatPercentage } from '@/shared/lib/utils';
 
@@ -13,67 +11,69 @@ export function RegimePanelWidget() {
 
   const { regimeDiagnosis } = activeScenario;
 
-  const colorMap = {
-    'active-monsoon': 'sky' as const,
-    'break-monsoon': 'amber' as const,
-    'monsoon-depression': 'indigo' as const,
-    'orographic-convection': 'emerald' as const,
-    'coastal-rainfall': 'sky' as const,
-    'western-disturbance': 'amber' as const,
-    'transition-mixed': 'indigo' as const,
-  };
+  const regimes = [
+    { name: 'Active Monsoon', prob: 78, color: 'bg-emerald-500 dark:bg-emerald-400' },
+    { name: 'Monsoon Depression', prob: 14, color: 'bg-neutral-400 dark:bg-neutral-500' },
+    { name: 'Orographic Convection', prob: 5, color: 'bg-amber-500' },
+    { name: 'Monsoon Break', prob: 3, color: 'bg-neutral-300 dark:bg-neutral-700' },
+  ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Regime Probabilities */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Regime Probabilities</CardTitle>
-        </CardHeader>
-        <div className="space-y-4">
-          {regimeDiagnosis.probabilities.map((r) => (
-            <div key={r.regimeId} className="space-y-1.5">
-              <div className="flex justify-between text-xs font-mono">
-                <span className="text-slate-200 font-medium">{r.name}</span>
-                <span className="text-slate-400">{formatPercentage(r.probability)}</span>
-              </div>
-              <Progress value={Math.round(r.probability * 100)} color={colorMap[r.regimeId] || 'sky'} />
-            </div>
-          ))}
+    <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 text-xs select-none transition-colors shadow-sm">
+      {/* Header matching Image 2 */}
+      <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-3">
+        <span className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-semibold">
+          Atmospheric Regime Diagnosis
+        </span>
+        <Badge variant="pill-subtle" className="text-[9px]">
+          MoE CLASSIFIER
+        </Badge>
+      </div>
+
+      {/* Primary Regime Banner */}
+      <div className="flex items-baseline justify-between mb-1">
+        <div className="text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-tight">
+          {regimeDiagnosis.primaryRegimeName}
         </div>
-      </Card>
-
-      {/* Synoptic Atmospheric Drivers */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Synoptic Atmospheric Drivers</CardTitle>
-        </CardHeader>
-        <div className="space-y-3 text-xs">
-          <div className="p-3 rounded bg-slate-950/60 border border-slate-800/60 flex justify-between items-center">
-            <div>
-              <div className="font-semibold text-slate-200">Monsoon Trough Axis</div>
-              <div className="text-[11px] text-slate-400">Position relative to normal synoptic climatology</div>
-            </div>
-            <Badge variant="info">{regimeDiagnosis.atmosphericDrivers.monsoonTroughPosition}</Badge>
-          </div>
-
-          <div className="p-3 rounded bg-slate-950/60 border border-slate-800/60 flex justify-between items-center">
-            <div>
-              <div className="font-semibold text-slate-200">Low-Level Moisture Flux (850 hPa)</div>
-              <div className="text-[11px] text-slate-400">Integrated water vapor transport vector</div>
-            </div>
-            <Badge variant="success">{regimeDiagnosis.atmosphericDrivers.lowLevelMoistureFlux}</Badge>
-          </div>
-
-          <div className="p-3 rounded bg-slate-950/60 border border-slate-800/60 flex justify-between items-center">
-            <div>
-              <div className="font-semibold text-slate-200">Mid-Tropospheric Vorticity</div>
-              <div className="text-[11px] text-slate-400">Curvature & cyclonic spin over subcontinent</div>
-            </div>
-            <Badge variant="regime">{regimeDiagnosis.atmosphericDrivers.vorticity850hPa}</Badge>
-          </div>
+        <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+          {formatPercentage(regimeDiagnosis.confidence)}
         </div>
-      </Card>
+      </div>
+      <p className="text-[10px] text-neutral-500 dark:text-neutral-400 mb-3 leading-tight">
+        Synoptic Low-Level Jet & Deep Tropospheric Moisture
+      </p>
+
+      {/* 4 Horizontal Progress Bars */}
+      <div className="space-y-2 mb-3">
+        {regimes.map((r) => (
+          <div key={r.name} className="flex items-center gap-2 text-[10px]">
+            <span className="w-24 sm:w-36 text-neutral-600 dark:text-neutral-400 truncate shrink-0">{r.name}</span>
+            <div className="flex-1 bg-neutral-100 dark:bg-[#1f1f1f] rounded-full h-1.5 overflow-hidden">
+              <div
+                className={`h-full rounded-full ${r.color}`}
+                style={{ width: `${r.prob}%` }}
+              />
+            </div>
+            <span className="w-8 text-right text-neutral-800 dark:text-neutral-200 font-medium shrink-0">{r.prob}%</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Transition Timeline */}
+      <div className="pt-2 border-t border-neutral-200 dark:border-[#262626]">
+        <div className="text-[9px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1.5 font-semibold">
+          Regime Transition Timeline
+        </div>
+        <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] flex flex-wrap sm:flex-nowrap gap-1.5 items-center justify-between text-[10px]">
+          <span className="text-neutral-500 dark:text-neutral-400">PAST (Break)</span>
+          <span className="text-neutral-400 dark:text-neutral-600 hidden sm:inline">───</span>
+          <span className="text-emerald-600 dark:text-emerald-400 font-semibold bg-transparent px-2 py-0.5 rounded-full border border-emerald-500/40">
+            [NOW: Transition 81%]
+          </span>
+          <span className="text-neutral-400 dark:text-neutral-600 hidden sm:inline">───</span>
+          <span className="text-neutral-700 dark:text-neutral-300">NEXT 72H (Active 78%)</span>
+        </div>
+      </div>
     </div>
   );
 }

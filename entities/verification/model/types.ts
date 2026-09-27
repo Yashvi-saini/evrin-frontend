@@ -1,4 +1,4 @@
-import { WeatherRegimeId } from '../regime';
+import { WeatherRegimeId } from '../../regime';
 
 export interface MetricComparison {
   name: string;

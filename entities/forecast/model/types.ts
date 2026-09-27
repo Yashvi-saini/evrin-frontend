@@ -1,7 +1,7 @@
-import { District } from '../district';
-import { WeatherRegimeId } from '../regime';
-import { RainfallQuantiles, UncertaintyRange } from '../rainfall';
-import { CorrectionDelta, CorrectionDriver } from '../correction';
+import { District } from '../../district';
+import { WeatherRegimeId } from '../../regime';
+import { RainfallQuantiles, UncertaintyRange } from '../../rainfall';
+import { CorrectionDelta, CorrectionDriver } from '../../correction';
 
 export interface RawNwpForecast {
   modelName: 'IMD-GFS' | 'NCUM' | 'ECMWF-RAW';

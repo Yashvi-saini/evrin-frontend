@@ -3,7 +3,6 @@
 import React from 'react';
 import { MapLayerId } from '../model/types';
 import { cn } from '@/shared/lib/utils';
-import { Layers } from '@/shared/ui/icons';
 
 export interface MapLayerControlProps {
   activeLayer: MapLayerId;
@@ -11,21 +10,18 @@ export interface MapLayerControlProps {
 }
 
 export function MapLayerControl({ activeLayer, onLayerChange }: MapLayerControlProps) {
+  // Exact layers from Image 2
   const layers: { id: MapLayerId; label: string }[] = [
-    { id: 'evrin-corrected', label: 'EVRIN Corrected' },
     { id: 'raw-nwp', label: 'Raw NWP' },
-    { id: 'difference', label: 'Difference (Delta)' },
+    { id: 'evrin-corrected', label: 'EVRIN Corrected' },
+    { id: 'difference', label: 'Difference (+/-)' },
     { id: 'heavy-rain-prob', label: 'Heavy Rain Prob' },
-    { id: 'regime', label: 'Weather Regime' },
-    { id: 'uncertainty', label: 'Uncertainty' },
+    { id: 'regime', label: 'Regime Flow' },
+    { id: 'uncertainty', label: 'Uncertainty P90' },
   ];
 
   return (
-    <div className="bg-slate-950/80 backdrop-blur border border-slate-800 p-1 rounded-md flex flex-wrap gap-1 font-mono text-[11px] select-none">
-      <div className="flex items-center gap-1.5 px-2 py-1 text-slate-500 font-semibold uppercase text-[10px]">
-        <Layers size={13} className="text-sky-400" />
-        <span className="hidden sm:inline">Layer:</span>
-      </div>
+    <div className="flex flex-wrap items-center gap-1.5 select-none text-xs">
       {layers.map((layer) => {
         const isActive = activeLayer === layer.id;
         return (
@@ -33,10 +29,10 @@ export function MapLayerControl({ activeLayer, onLayerChange }: MapLayerControlP
             key={layer.id}
             onClick={() => onLayerChange(layer.id)}
             className={cn(
-              'px-2.5 py-1 rounded transition-colors',
+              'px-3 py-1 rounded-full text-xs transition-colors border',
               isActive
-                ? 'bg-sky-500 text-slate-950 font-bold shadow-sm'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                ? 'bg-[#1A8FCB] dark:bg-white text-white dark:text-black border-transparent font-medium shadow-none'
+                : 'bg-transparent hover:bg-neutral-100 dark:hover:bg-[#161616] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white border-neutral-300 dark:border-[#262626]'
             )}
           >
             {layer.label}

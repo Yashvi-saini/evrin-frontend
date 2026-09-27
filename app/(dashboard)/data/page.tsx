@@ -1,63 +1,260 @@
-import React from 'react';
-import { Card, CardHeader, CardTitle } from '@/shared/ui/card';
+'use client';
+
+import React, { useState } from 'react';
 import { Badge } from '@/shared/ui/badge';
-import { Database } from '@/shared/ui/icons';
+import { Database, RefreshCw, Activity, CheckCircle2, Zap, Radio, Server } from '@/shared/ui/icons';
 
 export default function DataPage() {
-  const sources = [
-    { name: 'IMD Global Forecast System (GFS)', type: 'Raw NWP', res: '12 km', cycle: '00z & 12z daily', status: 'ACTIVE' },
-    { name: 'NCMRWF Unified Model (NCUM)', type: 'Ensemble NWP', res: '12 km', cycle: '00z & 12z daily', status: 'ACTIVE' },
-    { name: 'IMD Gridded Daily Rainfall Analysis', type: 'Observation Benchmark', res: '0.25° x 0.25°', cycle: 'Daily retrospective', status: 'VERIFIED' },
-    { name: 'INSAT-3D/3DR Hydro-Estimator Satellite', type: 'Near Real-Time Observation', res: '4 km', cycle: '15 min intervals', status: 'SYNCHRONIZED' },
-    { name: 'Doppler Weather Radar (DWR) Network', type: 'Nowcasting Radar Ingestion', res: 'Grid level', cycle: '10 min updates', status: 'READY' },
+  const [selectedFeedFilter, setSelectedFeedFilter] = useState<string>('all');
+
+  const feeds = [
+    {
+      name: 'ECMWF Integrated Forecasting System (IFS)',
+      agency: 'ECMWF Open Data',
+      type: 'Global NWP High-Res',
+      res: '0.1° (~9 km)',
+      cycle: '00z, 06z, 12z, 18z',
+      latency: '42s after dissemination',
+      status: 'SYNCHRONIZED',
+      health: '100%',
+      variables: 'U/V (850, 500 hPa), T, Q, PWAT, CAPE, Mean Sea Level Pressure',
+    },
+    {
+      name: 'IMD Global Forecast System (GFS)',
+      agency: 'India Meteorological Dept',
+      type: 'National Operational NWP',
+      res: '12 km National Grid',
+      cycle: '00z & 12z daily',
+      latency: '28s pipeline ingest',
+      status: 'SYNCHRONIZED',
+      health: '99.8%',
+      variables: '24h/48h Acc. Precip, Boundary Layer Height, 2m Temperature',
+    },
+    {
+      name: 'NCMRWF Unified Model (NCUM)',
+      agency: 'MoES NCMRWF',
+      type: 'Regional High-Res Model',
+      res: '4 km India Domain',
+      cycle: '00z & 12z daily',
+      latency: '35s pipeline ingest',
+      status: 'SYNCHRONIZED',
+      health: '100%',
+      variables: 'Convective Precip, Deep Soil Moisture, Orographic Drag Vector',
+    },
+    {
+      name: 'INSAT-3D/3DR Hydro-Estimator Satellite',
+      agency: 'ISRO / IMD Satellite Division',
+      type: 'Near Real-Time Geostationary',
+      res: '4 km Pixel Resolution',
+      cycle: '15-min Rapid Scan',
+      latency: '8s live telemetry',
+      status: 'LIVE STREAM',
+      health: '100%',
+      variables: 'TIR-1 (10.8 µm), Water Vapor (6.9 µm), Cloud Top Temperature',
+    },
+    {
+      name: 'IMD Doppler Weather Radar (DWR) 34-Station Network',
+      agency: 'IMD Radar Network',
+      type: 'Dual-Pol Doppler Radar',
+      res: '500m Radial Grid',
+      cycle: '10-min Volume Scans',
+      latency: '14s live mosaic',
+      status: 'LIVE STREAM',
+      health: '98.5%',
+      variables: 'Reflectivity (Z_H), Differential Reflectivity (Z_DR), Radial Velocity',
+    },
+    {
+      name: 'IMD 0.25° Daily Gridded Rainfall Analysis',
+      agency: 'National Climate Center, Pune',
+      type: 'Ground Observation Truth',
+      res: '0.25° x 0.25° (~27 km)',
+      cycle: 'Daily 03:00 UTC',
+      latency: 'Archived Benchmark',
+      status: 'VERIFIED',
+      health: '100%',
+      variables: 'Gauge-calibrated surface accumulation for 44-year hindcast truth',
+    },
   ];
 
+  const filterPills = [
+    { id: 'all', label: 'All Feeds (6)' },
+    { id: 'nwp', label: 'Numerical NWP' },
+    { id: 'satellite', label: 'Satellite & Radar' },
+    { id: 'ground', label: 'Ground Truth' },
+  ];
+
+  const filteredFeeds = feeds.filter((f) => {
+    if (selectedFeedFilter === 'nwp') return f.type.includes('NWP') || f.type.includes('Model');
+    if (selectedFeedFilter === 'satellite') return f.type.includes('Satellite') || f.type.includes('Radar');
+    if (selectedFeedFilter === 'ground') return f.type.includes('Ground') || f.type.includes('Observation');
+    return true;
+  });
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5 font-mono select-none">
+      {/* Header Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 dark:border-[#262626] pb-3">
         <div>
-          <h2 className="text-lg font-bold text-slate-100 tracking-tight">Data Sources & NWP Ingestion</h2>
-          <p className="text-xs text-slate-400 mt-1 font-mono">
-            Atmospheric parameters, gridded observations, and NWP inputs fueling EVRIN calibration.
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">Data Sources & NWP Ingestion</h1>
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-900/60 text-emerald-600 dark:text-emerald-400 font-mono font-bold bg-emerald-50 dark:bg-emerald-950/20">
+              ALL FEEDS HEALTHY (100%)
+            </span>
+          </div>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 font-sans mt-0.5">
+            Atmospheric variables, satellite radiometry, and ground radar feeds feeding EVRIN&apos;s real-time calibration pipe.
           </p>
         </div>
-        <Badge variant="success">All Feeds Operational</Badge>
+
+        {/* Filter Pills */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {filterPills.map((pill) => {
+            const isActive = selectedFeedFilter === pill.id;
+            return (
+              <button
+                key={pill.id}
+                onClick={() => setSelectedFeedFilter(pill.id)}
+                className={`px-3 py-1 rounded-full text-xs font-mono transition-all border ${
+                  isActive
+                    ? 'bg-[#1A8FCB] text-white dark:bg-white dark:text-black border-[#1A8FCB] dark:border-white font-bold'
+                    : 'bg-transparent text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-[#262626] hover:border-neutral-400 dark:hover:border-neutral-600'
+                }`}
+              >
+                {pill.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Database size={15} className="text-sky-400" />
-            <span>Operational Meteorological Feeds</span>
-          </CardTitle>
-        </CardHeader>
+      {/* 4 Ingestion Telemetry Metric KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+          <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Total Daily Ingestion Volume</div>
+          <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
+            48.2 GB
+          </div>
+          <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-1">GRIB2 + NetCDF-4 Streams</div>
+        </div>
+
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+          <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Average Ingestion Latency</div>
+          <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
+            26.4 sec
+          </div>
+          <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-1">Dissemination to GPU Memory</div>
+        </div>
+
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+          <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">DWR Radar Coverage</div>
+          <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
+            34 Stations
+          </div>
+          <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-1">Nowcasting Doppler Mosaic Active</div>
+        </div>
+
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+          <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Grid Interpolation Fidelity</div>
+          <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
+            0.05° (~5 km)
+          </div>
+          <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-1">Bilinear + Topographic Hypsometry</div>
+        </div>
+      </div>
+
+      {/* Ingestion Latency Timeline Visualization */}
+      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4">
+        <div className="flex items-center justify-between pb-2.5 border-b border-neutral-200 dark:border-[#262626] mb-3">
+          <div className="flex items-center gap-2">
+            <Radio size={14} className="text-neutral-600 dark:text-neutral-400" />
+            <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
+              Real-Time Ingestion Throughput & Latency (Last 24 Hours)
+            </span>
+          </div>
+          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            POLLING RATE: 10s
+          </span>
+        </div>
+
+        {/* SVG Latency Barcode Sparkline */}
+        <div className="w-full h-20 bg-neutral-50 dark:bg-[#0A0A0A] rounded border border-neutral-200 dark:border-[#262626] p-2 flex items-end gap-1">
+          {Array.from({ length: 48 }).map((_, idx) => {
+            const h = 25 + Math.sin(idx * 0.4) * 15 + (idx % 7 === 0 ? 30 : 0);
+            const isBurst = idx % 7 === 0;
+            return (
+              <div
+                key={idx}
+                className="flex-1 rounded-t transition-all group relative cursor-pointer"
+                style={{
+                  height: `${h}%`,
+                  backgroundColor: isBurst ? '#0284c7' : '#737373',
+                  opacity: isBurst ? 0.9 : 0.35,
+                }}
+              >
+                <div className="hidden group-hover:block absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-neutral-900 text-white border border-neutral-700 text-[8px] px-1.5 py-0.5 rounded whitespace-nowrap z-10 font-mono">
+                  Cycle #{idx}: {h.toFixed(0)} MB/s
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex justify-between items-center text-[9px] text-neutral-400 dark:text-neutral-500 mt-1 font-mono">
+          <span>T - 24 Hours</span>
+          <span>T - 12 Hours (12Z Cycle Run)</span>
+          <span>T - 06 Hours</span>
+          <span className="text-neutral-900 dark:text-neutral-100 font-bold">Now (06Z Cycle Synchronized)</span>
+        </div>
+      </div>
+
+      {/* Main Meteorological Feeds Table */}
+      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4">
+        <div className="flex items-center justify-between pb-2.5 border-b border-neutral-200 dark:border-[#262626] mb-3">
+          <div className="flex items-center gap-2">
+            <Server size={14} className="text-neutral-600 dark:text-neutral-400" />
+            <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
+              Connected Sensor & NWP Data Streams
+            </span>
+          </div>
+          <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-mono">
+            DISPLAYING {filteredFeeds.length} FEEDS
+          </span>
+        </div>
+
         <div className="overflow-x-auto">
-          <table className="w-full text-xs font-mono">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 text-left">
-                <th className="pb-2">Source Dataset</th>
-                <th className="pb-2">Feed Type</th>
-                <th className="pb-2">Spatial Resolution</th>
-                <th className="pb-2">Update Cycle</th>
-                <th className="pb-2">Status</th>
+              <tr className="border-b border-neutral-200 dark:border-[#262626] text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                <th className="py-2.5 px-3 font-semibold">Feed Source & Agency</th>
+                <th className="py-2.5 px-3 font-semibold">Class</th>
+                <th className="py-2.5 px-3 font-semibold">Resolution</th>
+                <th className="py-2.5 px-3 font-semibold">Cycle</th>
+                <th className="py-2.5 px-3 font-semibold">Latency</th>
+                <th className="py-2.5 px-3 font-semibold text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {sources.map((s) => (
-                <tr key={s.name} className="hover:bg-slate-900/40">
-                  <td className="py-3 font-sans font-semibold text-slate-200">{s.name}</td>
-                  <td className="py-3 text-slate-400">{s.type}</td>
-                  <td className="py-3 text-sky-400">{s.res}</td>
-                  <td className="py-3 text-slate-400">{s.cycle}</td>
-                  <td className="py-3">
-                    <Badge variant="success" size="sm">{s.status}</Badge>
+            <tbody className="divide-y divide-neutral-200 dark:divide-[#262626] font-mono text-[11px]">
+              {filteredFeeds.map((feed) => (
+                <tr key={feed.name} className="hover:bg-neutral-50 dark:hover:bg-[#1a1a1a]">
+                  <td className="py-3 px-3">
+                    <div className="font-sans font-bold text-neutral-900 dark:text-neutral-100">{feed.name}</div>
+                    <div className="text-[10px] text-neutral-500 dark:text-neutral-400 font-mono">{feed.agency}</div>
+                  </td>
+                  <td className="py-3 px-3 text-neutral-700 dark:text-neutral-300 font-sans">{feed.type}</td>
+                  <td className="py-3 px-3 text-neutral-900 dark:text-neutral-100 font-bold">{feed.res}</td>
+                  <td className="py-3 px-3 text-neutral-500 dark:text-neutral-400">{feed.cycle}</td>
+                  <td className="py-3 px-3 text-neutral-700 dark:text-neutral-300">{feed.latency}</td>
+                  <td className="py-3 px-3 text-right">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-neutral-100 dark:bg-[#1a1a1a] text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-[#262626]">
+                      {feed.status}
+                    </span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

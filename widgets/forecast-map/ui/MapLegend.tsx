@@ -8,23 +8,26 @@ export interface MapLegendProps {
 }
 
 export function MapLegend({ activeLayer }: MapLegendProps) {
-  if (activeLayer === 'regime') {
-    const regimes = [
-      { label: 'Active Monsoon', color: '#0ea5e9' },
-      { label: 'Monsoon Depression', color: '#6366f1' },
-      { label: 'Orographic Convection', color: '#10b981' },
-      { label: 'Coastal Rainfall', color: '#06b6d4' },
-      { label: 'Break Monsoon', color: '#f59e0b' },
+  if (activeLayer === 'difference') {
+    const diffScale = [
+      { val: '-30mm', label: 'Overest.', color: '#ea580c' },
+      { val: '-15mm', label: '', color: '#f59e0b' },
+      { val: '0mm', label: 'Neutral', color: '#64748b' },
+      { val: '+20mm', label: '', color: '#0284c7' },
+      { val: '+50mm', label: 'Uplift', color: '#06b6d4' },
+      { val: '>+80mm', label: 'Heavy Uplift', color: '#38bdf8' },
     ];
-
     return (
-      <div className="bg-slate-950/80 backdrop-blur border border-slate-800 p-2.5 rounded-md font-mono text-[10px]">
-        <div className="text-slate-400 uppercase tracking-wider mb-1.5 font-semibold">Regime Classification</div>
-        <div className="flex flex-wrap gap-2.5">
-          {regimes.map((r) => (
-            <div key={r.label} className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: r.color }} />
-              <span className="text-slate-300">{r.label}</span>
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+        <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
+          <span>BIAS DELTA ANOMALY</span>
+          <span className="text-cyan-400">EVRIN - NWP (mm)</span>
+        </div>
+        <div className="flex items-center gap-0.5">
+          {diffScale.map((item) => (
+            <div key={item.val} className="flex flex-col items-center">
+              <span className="w-8 h-2 rounded-sm" style={{ backgroundColor: item.color }} />
+              <span className="text-slate-400 text-[9px] mt-0.5">{item.val}</span>
             </div>
           ))}
         </div>
@@ -32,94 +35,96 @@ export function MapLegend({ activeLayer }: MapLegendProps) {
     );
   }
 
-  if (activeLayer === 'difference') {
+  if (activeLayer === 'heavy-rain-prob') {
+    const probScale = [
+      { val: '<30%', label: 'Low', color: '#10b981' },
+      { val: '30-60%', label: 'Moderate', color: '#eab308' },
+      { val: '60-80%', label: 'Orange Alert', color: '#f97316' },
+      { val: '>80%', label: 'Red Warning', color: '#ef4444' },
+    ];
     return (
-      <div className="bg-slate-950/80 backdrop-blur border border-slate-800 p-2.5 rounded-md font-mono text-[10px]">
-        <div className="flex items-center justify-between text-slate-400 uppercase tracking-wider mb-1">
-          <span>EVRIN Delta (Bias Correction)</span>
-          <span className="text-slate-500">mm</span>
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+        <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
+          <span>IMD EXTREME PROBABILITY</span>
+          <span className="text-rose-400">&gt;64.5mm / 24h</span>
         </div>
-        <div
-          className="h-2.5 w-48 rounded-sm mb-1"
-          style={{
-            background: 'linear-gradient(to right, #ef4444, #f59e0b, #64748b, #06b6d4, #10b981)',
-          }}
-        />
-        <div className="flex justify-between text-slate-400 text-[9px]">
-          <span>-30 mm (Suppression)</span>
-          <span>0</span>
-          <span>+50 mm (Enhancement)</span>
+        <div className="flex items-center gap-1">
+          {probScale.map((item) => (
+            <div key={item.val} className="flex items-center gap-1 px-1.5 py-0.5 rounded border border-slate-700/60">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+              <span className="text-slate-300 text-[9px]">{item.val}</span>
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
-  if (activeLayer === 'heavy-rain-prob') {
+  if (activeLayer === 'regime') {
     return (
-      <div className="bg-slate-950/80 backdrop-blur border border-slate-800 p-2.5 rounded-md font-mono text-[10px]">
-        <div className="flex items-center justify-between text-slate-400 uppercase tracking-wider mb-1">
-          <span>P(Rain &gt; 64.5 mm)</span>
-          <span className="text-slate-500">%</span>
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+        <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
+          <span>SYNOPTIC REGIME FLOW</span>
+          <span className="text-teal-400">MoE CLASSIFIER</span>
         </div>
-        <div
-          className="h-2.5 w-48 rounded-sm mb-1"
-          style={{
-            background: 'linear-gradient(to right, #1e293b, #22c55e, #eab308, #f97316, #ef4444)',
-          }}
-        />
-        <div className="flex justify-between text-slate-400 text-[9px]">
-          <span>0%</span>
-          <span>25%</span>
-          <span>50%</span>
-          <span>75%</span>
-          <span>&gt;90%</span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[9px] px-2 py-0.5 rounded-full border border-sky-500/50 text-sky-400 font-mono">Monsoon Trough</span>
+          <span className="text-[9px] px-2 py-0.5 rounded-full border border-amber-500/50 text-amber-400 font-mono">Orographic Convection</span>
+          <span className="text-[9px] px-2 py-0.5 rounded-full border border-red-500/50 text-red-400 font-mono">Depression Landfall</span>
+          <span className="text-[9px] px-2 py-0.5 rounded-full border border-teal-500/50 text-teal-400 font-mono">Coastal Inflow</span>
         </div>
       </div>
     );
   }
 
   if (activeLayer === 'uncertainty') {
+    const uncertScale = [
+      { val: '±15mm', label: 'Tight', color: '#06b6d4' },
+      { val: '±35mm', label: 'Normal', color: '#3b82f6' },
+      { val: '±60mm', label: 'Elevated', color: '#a855f7' },
+      { val: '>±85mm', label: 'High Spread', color: '#ec4899' },
+    ];
     return (
-      <div className="bg-slate-950/80 backdrop-blur border border-slate-800 p-2.5 rounded-md font-mono text-[10px]">
-        <div className="flex items-center justify-between text-slate-400 uppercase tracking-wider mb-1">
-          <span>Uncertainty Spread (P90 - P10)</span>
-          <span className="text-slate-500">mm</span>
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+        <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
+          <span>UNCERTAINTY ENVELOPE</span>
+          <span className="text-purple-400">51-MEMBER P90</span>
         </div>
-        <div
-          className="h-2.5 w-48 rounded-sm mb-1"
-          style={{
-            background: 'linear-gradient(to right, #0284c7, #38bdf8, #a855f7, #ec4899)',
-          }}
-        />
-        <div className="flex justify-between text-slate-400 text-[9px]">
-          <span>10 mm (High Conf.)</span>
-          <span>50 mm</span>
-          <span>&gt;120 mm (High Spread)</span>
+        <div className="flex items-center gap-0.5">
+          {uncertScale.map((item) => (
+            <div key={item.val} className="flex flex-col items-center">
+              <span className="w-8 h-2 rounded-sm" style={{ backgroundColor: item.color }} />
+              <span className="text-slate-400 text-[9px] mt-0.5">{item.val}</span>
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
-  // Default: Rainfall accumulation (Raw NWP or EVRIN Corrected)
+  // Standard Accumulation scale for Raw NWP and EVRIN Corrected
+  const scale = [
+    { val: '0', color: '#0c4a6e' },
+    { val: '15', color: '#0284c7' },
+    { val: '35', color: '#10b981' },
+    { val: '64.5', color: '#eab308' },
+    { val: '115.6', color: '#f97316' },
+    { val: '>204.5', color: '#ef4444' },
+  ];
+
   return (
-    <div className="bg-slate-950/80 backdrop-blur border border-slate-800 p-2.5 rounded-md font-mono text-[10px]">
-      <div className="flex items-center justify-between text-slate-400 uppercase tracking-wider mb-1">
-        <span>24h Rainfall Accumulation</span>
-        <span className="text-slate-500">mm</span>
+    <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+      <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
+        <span>{activeLayer === 'raw-nwp' ? 'RAW NWP ACCUMULATION' : 'EVRIN CALIBRATED ACCUMULATION'} (24h)</span>
+        <span className="text-teal-400">mm</span>
       </div>
-      <div
-        className="h-2.5 w-48 rounded-sm mb-1"
-        style={{
-          background: 'linear-gradient(to right, #0c4a6e, #0284c7, #10b981, #eab308, #f97316, #dc2626)',
-        }}
-      />
-      <div className="flex justify-between text-slate-400 text-[9px]">
-        <span>0</span>
-        <span>15</span>
-        <span>35</span>
-        <span>64.5 (Heavy)</span>
-        <span>115.5</span>
-        <span>&gt;150</span>
+      <div className="flex items-center gap-0.5">
+        {scale.map((item) => (
+          <div key={item.val} className="flex flex-col items-center">
+            <span className="w-7 h-2 rounded-sm" style={{ backgroundColor: item.color }} />
+            <span className="text-slate-400 text-[9px] mt-0.5">{item.val}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

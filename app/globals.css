@@ -1,17 +1,50 @@
 @import "tailwindcss";
 
-:root {
-  /* Scientific Meteorological Theme - Operational Dark Base */
-  --background: #090d16;
-  --foreground: #f1f5f9;
-  
-  --surface-primary: #0e1526;
-  --surface-secondary: #162035;
-  --surface-tertiary: #1f2d48;
-  --surface-border: #283755;
-  --surface-border-subtle: #1e2c45;
+@custom-variant dark (&:where(.dark, .dark *));
 
-  /* Atmospheric / Weather Accents */
+/* Universal Outfit Font Enforcement - No other font allowed */
+* {
+  font-family: var(--font-outfit), sans-serif !important;
+}
+
+:root {
+  /* Clean, Scientific Light Theme */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  
+  --surface-primary: #ffffff;
+  --surface-secondary: #f1f5f9;
+  --surface-tertiary: #e2e8f0;
+  --surface-border: #e2e8f0;
+  --surface-border-subtle: #cbd5e1;
+
+  --met-blue: #0284c7;
+  --met-cyan: #0891b2;
+  --met-teal: #0d9488;
+  --met-indigo: #4f46e5;
+  --met-amber: #d97706;
+  --met-emerald: #059669;
+
+  --imd-green: #16a34a;
+  --imd-yellow: #ca8a04;
+  --imd-orange: #ea580c;
+  --imd-red: #dc2626;
+
+  --font-sans: var(--font-outfit), sans-serif;
+  --font-mono: var(--font-outfit), sans-serif;
+}
+
+.dark {
+  /* Exact Pure Neutral/Gray Dark Palette: #0A0A0A base, #141414 cards - No blue tint */
+  --background: #0A0A0A;
+  --foreground: #ededed;
+  
+  --surface-primary: #141414;
+  --surface-secondary: #1a1a1a;
+  --surface-tertiary: #222222;
+  --surface-border: #262626;
+  --surface-border-subtle: #333333;
+
   --met-blue: #38bdf8;
   --met-cyan: #06b6d4;
   --met-teal: #14b8a6;
@@ -19,15 +52,10 @@
   --met-amber: #f59e0b;
   --met-emerald: #10b981;
 
-  /* Operational Warning Tiers (IMD Standard) */
   --imd-green: #22c55e;
   --imd-yellow: #eab308;
   --imd-orange: #f97316;
   --imd-red: #ef4444;
-
-  /* Typography */
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
 }
 
 @theme inline {
@@ -51,79 +79,145 @@
   --color-imd-orange: var(--imd-orange);
   --color-imd-red: var(--imd-red);
 
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-sans: var(--font-outfit), sans-serif;
+  --font-mono: var(--font-outfit), sans-serif;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--font-outfit), sans-serif !important;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Custom crisp scrollbars for scientific panels */
+/* Subtle, unobtrusive dot grid */
+html.dark body {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+html:not(.dark) body {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* CRITICAL: Extinguish all shiny illumination & glowing neon halos everywhere */
+[class*="shadow-[0_0_"],
+.shadow-glow,
+.neon-glow,
+.shiny-glow {
+  box-shadow: none !important;
+}
+
+/* Sleek, matte scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface-primary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--surface-border);
-  border-radius: 3px;
+  background: #334155;
+  border-radius: 9999px;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--surface-tertiary);
+  background: #475569;
 }
 
-/* Leaflet Dark GIS Theme Overrides */
+/* Leaflet Cartography Container */
 .leaflet-container {
-  background-color: #070b14 !important;
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-outfit), sans-serif !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-.leaflet-popup-content-wrapper {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid #334155 !important;
+html.dark .leaflet-container {
+  background-color: #0A0A0A !important;
+}
+
+html:not(.dark) .leaflet-container {
+  background-color: #f8fafc !important;
+}
+
+/* Clean, Matte Leaflet Popups (NO shiny AI glow) */
+html.dark .leaflet-popup-content-wrapper {
+  background: #141414 !important;
+  color: #ededed !important;
+  border: 1px solid #262626 !important;
   border-radius: 8px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
 }
 
-.leaflet-popup-tip {
-  background: #0f172a !important;
-  border: 1px solid #334155 !important;
+html:not(.dark) .leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
-.leaflet-control-zoom {
-  border: 1px solid #334155 !important;
+html.dark .leaflet-popup-tip {
+  background: #141414 !important;
+  border: 1px solid #262626 !important;
+}
+
+html:not(.dark) .leaflet-popup-tip {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html.dark .leaflet-control-zoom {
+  border: 1px solid #262626 !important;
   border-radius: 6px !important;
   overflow: hidden;
 }
 
-.leaflet-control-zoom a {
-  background-color: #0f172a !important;
-  color: #94a3b8 !important;
-  border-bottom: 1px solid #1e293b !important;
+html:not(.dark) .leaflet-control-zoom {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  overflow: hidden;
 }
 
-.leaflet-control-zoom a:hover {
-  background-color: #1e293b !important;
-  color: #38bdf8 !important;
+html.dark .leaflet-control-zoom a {
+  background-color: #141414 !important;
+  color: #a3a3a3 !important;
+  border-bottom: 1px solid #262626 !important;
 }
 
-.leaflet-control-attribution {
-  background-color: rgba(15, 23, 42, 0.8) !important;
-  color: #64748b !important;
+html:not(.dark) .leaflet-control-zoom a {
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html.dark .leaflet-control-zoom a:hover {
+  background-color: #262626 !important;
+  color: #ffffff !important;
+}
+
+html:not(.dark) .leaflet-control-zoom a:hover {
+  background-color: #f1f5f9 !important;
+  color: #0284c7 !important;
+}
+
+html.dark .leaflet-control-attribution {
+  background-color: rgba(20, 20, 20, 0.85) !important;
+  color: #737373 !important;
   font-size: 9px !important;
 }
 
-.leaflet-control-attribution a {
-  color: #38bdf8 !important;
+html:not(.dark) .leaflet-control-attribution {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  color: #94a3b8 !important;
+  font-size: 9px !important;
 }
