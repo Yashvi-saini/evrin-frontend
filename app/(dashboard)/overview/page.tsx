@@ -7,6 +7,7 @@ import { MetricKpiCards } from '@/widgets/forecast-summary';
 import { IndiaMap } from '@/widgets/forecast-map';
 import { DistrictInspectionWidget } from '@/widgets/district-inspection';
 import { CorrectionDriversWidget } from '@/widgets/correction-drivers';
+import { RegimeTimelineWidget } from '@/widgets/regime-panel';
 
 export default function OverviewPage() {
   const { activeScenario, isLoading } = useForecastRepository();
@@ -22,10 +23,10 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards Row */}
+      {/* 4 Primary KPI Metric Cards */}
       <MetricKpiCards />
 
-      {/* Main Map & Inspection Grid */}
+      {/* Main Map & Target Inspection Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Interactive Real Geographic GIS Map */}
         <div className="lg:col-span-2 min-h-[540px]">
@@ -38,6 +39,9 @@ export default function OverviewPage() {
           <CorrectionDriversWidget />
         </div>
       </div>
+
+      {/* Regime Transition Timeline */}
+      <RegimeTimelineWidget />
     </div>
   );
 }
