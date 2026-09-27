@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Scientific Meteorological Theme - Operational Dark Base */
+  --background: #090d16;
+  --foreground: #f1f5f9;
+  
+  --surface-primary: #0e1526;
+  --surface-secondary: #162035;
+  --surface-tertiary: #1f2d48;
+  --surface-border: #283755;
+  --surface-border-subtle: #1e2c45;
+
+  /* Atmospheric / Weather Accents */
+  --met-blue: #38bdf8;
+  --met-cyan: #06b6d4;
+  --met-teal: #14b8a6;
+  --met-indigo: #6366f1;
+  --met-amber: #f59e0b;
+  --met-emerald: #10b981;
+
+  /* Operational Warning Tiers (IMD Standard) */
+  --imd-green: #22c55e;
+  --imd-yellow: #eab308;
+  --imd-orange: #f97316;
+  --imd-red: #ef4444;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-tertiary: var(--surface-tertiary);
+  --color-surface-border: var(--surface-border);
+  --color-surface-border-subtle: var(--surface-border-subtle);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-met-blue: var(--met-blue);
+  --color-met-cyan: var(--met-cyan);
+  --color-met-teal: var(--met-teal);
+  --color-met-indigo: var(--met-indigo);
+  --color-met-amber: var(--met-amber);
+  --color-met-emerald: var(--met-emerald);
+
+  --color-imd-green: var(--imd-green);
+  --color-imd-yellow: var(--imd-yellow);
+  --color-imd-orange: var(--imd-orange);
+  --color-imd-red: var(--imd-red);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom crisp scrollbars for scientific panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-tertiary);
 }
