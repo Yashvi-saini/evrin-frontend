@@ -111,6 +111,17 @@ html:not(.dark) body {
   box-shadow: none !important;
 }
 
+/* ============================================================
+   GLOBAL PILL OVERRIDE — No border, no background on any pill
+   Matches the reference design (clean text-only pills)
+   ============================================================ */
+span.rounded-full,
+div.rounded-full {
+  border: none !important;
+  background-color: transparent !important;
+  background: none !important;
+}
+
 /* Sleek, matte scrollbars */
 ::-webkit-scrollbar {
   width: 5px;

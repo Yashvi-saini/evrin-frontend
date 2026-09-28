@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { MapLayerId, MapDistrictPoint } from '../model/types';
@@ -669,7 +669,7 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
   const timeHorizons = ['00Z', '+06Z', '+12Z', '+24Z', '+36Z', '+48Z', '+72Z'];
 
   return (
-    <div className="relative w-full h-full min-h-[540px] flex flex-col bg-white dark:bg-[#141414] rounded-lg overflow-hidden border border-neutral-200 dark:border-[#262626] shadow-sm">
+    <div className="relative w-full h-full min-h-[540px] flex flex-col bg-white dark:bg-[#141414] rounded-lg overflow-hidden shadow-sm">
       {/* Top Bar of Map: Layer Switcher & Basemap View Buttons */}
       <div className="p-3 border-b border-neutral-200 dark:border-[#262626] bg-neutral-50 dark:bg-[#141414] flex flex-wrap items-center justify-between gap-2.5 z-10 select-none">
         {/* Layer Selector Pills with Vercel black & gray style */}
@@ -716,13 +716,13 @@ export function IndiaMap({ onSelectDistrict }: IndiaMapProps) {
       {/* Map Canvas and In-Map Overlays Container */}
       <div className="relative flex-1 w-full h-full min-h-[460px] overflow-hidden bg-neutral-100 dark:bg-[#0A0A0A]">
         {/* Floating Active Layer Badge Indicator inside Map Canvas (safe from header wrapping) */}
-        <div className="absolute top-3 left-3 z-[400] pointer-events-none">
-          <div className="px-3 py-1 rounded-full bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-300 dark:border-[#262626] text-[10px] text-neutral-800 dark:text-neutral-200 flex items-center gap-2 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="text-neutral-500 dark:text-neutral-400 uppercase font-medium">ACTIVE OVERLAY:</span>
+        <div className="absolute top-3 left-3 z-10 pointer-events-none">
+          <div className="text-[10px] text-neutral-600 dark:text-neutral-400 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+            <span className="uppercase font-medium">ACTIVE OVERLAY:</span>
             <span className="text-neutral-900 dark:text-white font-semibold uppercase tracking-wider">{activeLayer.replace('-', ' ')}</span>
             <span className="text-neutral-400 dark:text-neutral-600">|</span>
-            <span className="text-neutral-700 dark:text-neutral-300 font-medium">{activeTimeHorizon} HORIZON</span>
+            <span className="text-neutral-600 dark:text-neutral-300 font-medium">{activeTimeHorizon} HORIZON</span>
           </div>
         </div>
 

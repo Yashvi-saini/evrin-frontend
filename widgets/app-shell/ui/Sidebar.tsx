@@ -19,19 +19,20 @@ import {
 export interface SidebarProps {
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  onRunEnsemble?: () => void;
 }
 
 const NAV_ITEMS = [
   { name: 'Overview', path: '/overview', icon: Compass },
   { name: 'Forecast (District Grid)', path: '/forecast', icon: CloudRain },
   { name: 'Regimes', path: '/regimes', icon: BarChart3 },
-  { name: 'Extremes', path: '/extremes', icon: AlertTriangle, badge: '124' },
+  { name: 'Extremes', path: '/extremes', icon: AlertTriangle },
   { name: 'Verification', path: '/verification', icon: ShieldAlert },
   { name: 'Data', path: '/data', icon: Database },
   { name: 'Models', path: '/models', icon: Cpu },
 ];
 
-export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
+export function Sidebar({ isMobileOpen = false, onCloseMobile, onRunEnsemble }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -78,11 +79,8 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
               <CloudRain size={13} />
             </div>
             <div>
-              <div className="text-xs font-bold text-neutral-900 dark:text-white tracking-wide flex items-center gap-1.5">
-                <span>EVRIN OPS</span>
-                <span className="text-[8px] bg-[#1A8FCB]/10 text-[#1A8FCB] dark:bg-white/10 dark:text-white px-1 py-0.2 rounded font-bold">
-                  AI
-                </span>
+              <div className="text-xs font-bold text-neutral-900 dark:text-white tracking-wide">
+                EVRIN OPS
               </div>
               <div className="text-[9px] text-neutral-500 dark:text-neutral-400">National Met Grid</div>
             </div>
@@ -113,12 +111,6 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
                   </span>
                   <span className="truncate">{item.name}</span>
                 </div>
-
-                {item.badge && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-900/60 font-mono font-bold">
-                    {item.badge}
-                  </span>
-                )}
               </Link>
             );
           })}
@@ -128,8 +120,7 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
             <button
               onClick={() => {
                 onCloseMobile?.();
-                const runBtn = document.querySelector('header button');
-                if (runBtn) (runBtn as HTMLButtonElement).click();
+                onRunEnsemble?.();
               }}
               className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-full bg-[#1A8FCB] text-white dark:bg-white dark:text-black hover:bg-[#167db3] dark:hover:bg-neutral-200 text-xs font-semibold transition-all border border-[#1A8FCB] dark:border-white shadow-sm"
             >
@@ -141,7 +132,7 @@ export function Sidebar({ isMobileOpen = false, onCloseMobile }: SidebarProps) {
 
         {/* Telemetry Status Card Footer */}
         <div className="p-2.5 border-t border-neutral-200 dark:border-[#262626] bg-neutral-50/50 dark:bg-[#0A0A0A]">
-          <div className="p-2.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] text-[10px] space-y-2 shadow-xs">
+          <div className="p-2.5 rounded-lg bg-white dark:bg-[#141414] text-[10px] space-y-2 shadow-xs">
             <div className="flex items-center justify-between">
               <span className="text-[9px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

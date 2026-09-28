@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/shared/ui/badge';
@@ -154,12 +154,12 @@ export default function VerificationPage() {
   return (
     <div className="space-y-4 font-mono select-none">
       {/* 1. Header Ribbon & Filter Controls */}
-      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3">
+      <div className="bg-white dark:bg-[#141414] rounded-lg p-3">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-2.5">
           {/* Regime Selector */}
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase font-semibold">REGIME:</span>
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-transparent border border-neutral-300 dark:border-[#262626] text-neutral-800 dark:text-neutral-200 text-xs font-semibold cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-600">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-transparent text-neutral-800 dark:text-neutral-200 text-xs font-semibold cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-600">
               <span>{selectedRegime}</span>
               <ChevronDown size={12} className="text-neutral-400" />
             </div>
@@ -215,7 +215,7 @@ export default function VerificationPage() {
         {/* Sub-bar: Target Model & District Validation Count */}
         <div className="pt-2 border-t border-neutral-200 dark:border-[#262626] flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-2.5">
-            <div className="px-2.5 py-0.5 rounded-full bg-transparent border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 text-[11px] font-mono">
+            <div className="px-2.5 py-0.5 rounded-full bg-transparent text-neutral-700 dark:text-neutral-300 text-[11px] font-mono">
               TARGET: <span className="text-neutral-500">Raw NWP (ECMWF 0.1°)</span> vs <span className="text-neutral-900 dark:text-white font-bold">EVRIN MoE</span>
             </div>
             <div className="flex items-center gap-1.5 text-neutral-600 dark:text-neutral-400 text-[11px]">
@@ -226,7 +226,7 @@ export default function VerificationPage() {
 
           <button
             onClick={() => alert('Opening Evaluation Configuration Settings...')}
-            className="px-3 py-0.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 text-[11px] transition-all"
+            className="px-3 py-0.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-[11px] transition-all"
           >
             <Settings size={12} className="inline mr-1 shrink-0" />
             Evaluation Config
@@ -239,14 +239,14 @@ export default function VerificationPage() {
         {kpiMetrics.map((kpi) => (
           <div
             key={kpi.label}
-            className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between"
+            className="p-3 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between gap-1 mb-1.5">
                 <span className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase tracking-tight font-semibold truncate">
                   {kpi.label}
                 </span>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full border border-neutral-200 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 bg-neutral-50 dark:bg-[#1a1a1a] font-bold">
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300 font-bold">
                   {kpi.gainBadge}
                 </span>
               </div>
@@ -277,14 +277,14 @@ export default function VerificationPage() {
       {/* 3. Middle Row: Two Major Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left Chart: Reliability Diagram & Calibration */}
-        <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4 flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#141414] rounded-lg p-4 flex flex-col justify-between">
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                   Reliability Diagram & Calibration
                 </span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-[#1a1a1a]">
+                <span className="text-[9px] px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
                   P(&gt;64.5mm/24h)
                 </span>
               </div>
@@ -310,7 +310,7 @@ export default function VerificationPage() {
             </p>
 
             {/* SVG Reliability Plot Canvas */}
-            <div className="relative w-full h-[220px] bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg border border-neutral-200 dark:border-[#262626] p-2 flex items-center justify-center">
+            <div className="relative w-full h-[220px] bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg p-2 flex items-center justify-center">
               <svg viewBox="0 0 500 210" className="w-full h-full max-h-[210px]">
                 {/* Background Frequency Sharpness Histogram Bars */}
                 {reliabilityBins.map((bin) => {
@@ -421,14 +421,14 @@ export default function VerificationPage() {
         </div>
 
         {/* Right Chart: Lead Time Error Degradation */}
-        <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4 flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#141414] rounded-lg p-4 flex flex-col justify-between">
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                   Lead Time Error Degradation
                 </span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-[#1a1a1a]">
+                <span className="text-[9px] px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
                   D+1 to D+5 Curve
                 </span>
               </div>
@@ -454,7 +454,7 @@ export default function VerificationPage() {
             </p>
 
             {/* SVG Lead Time Plot Canvas */}
-            <div className="relative w-full h-[220px] bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg border border-neutral-200 dark:border-[#262626] p-2 flex items-center justify-center">
+            <div className="relative w-full h-[220px] bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg p-2 flex items-center justify-center">
               <svg viewBox="0 0 500 210" className="w-full h-full max-h-[210px]">
                 {/* Horizontal Grid lines */}
                 {[30, 45, 60, 75, 90].map((val) => {
@@ -578,14 +578,14 @@ export default function VerificationPage() {
       {/* 4. Bottom Row: Atmospheric Regime Skill Matrix & District Bias Correction Map */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Panel (8 cols): Atmospheric Regime Skill Matrix */}
-        <div className="lg:col-span-8 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4">
+        <div className="lg:col-span-8 bg-white dark:bg-[#141414] rounded-lg p-4">
           <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-neutral-200 dark:border-[#262626] mb-2.5">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                   Atmospheric Regime Skill Matrix
                 </span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-[#1a1a1a]">
+                <span className="text-[9px] px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
                   MoE Diagnostic
                 </span>
               </div>
@@ -630,22 +630,22 @@ export default function VerificationPage() {
                       {row.metric}
                     </td>
                     <td className="py-2.5 px-2.5 text-center">
-                      <span className="px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-900 dark:text-neutral-100 font-bold bg-neutral-50 dark:bg-[#1a1a1a]">
+                      <span className="px-2 py-0.5 rounded-full text-neutral-900 dark:text-neutral-100 font-bold">
                         {row.active}
                       </span>
                     </td>
                     <td className="py-2.5 px-2.5 text-center">
-                      <span className="px-2 py-0.5 rounded-full border border-neutral-200 dark:border-[#262626] text-neutral-600 dark:text-neutral-400 bg-transparent">
+                      <span className="px-2 py-0.5 rounded-full text-neutral-600 dark:text-neutral-400 bg-transparent">
                         {row.break}
                       </span>
                     </td>
                     <td className="py-2.5 px-2.5 text-center">
-                      <span className="px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-900 dark:text-neutral-100 font-bold bg-neutral-50 dark:bg-[#1a1a1a]">
+                      <span className="px-2 py-0.5 rounded-full text-neutral-900 dark:text-neutral-100 font-bold">
                         {row.depression}
                       </span>
                     </td>
                     <td className="py-2.5 px-2.5 text-center">
-                      <span className="px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-900 dark:text-neutral-100 font-bold bg-neutral-50 dark:bg-[#1a1a1a]">
+                      <span className="px-2 py-0.5 rounded-full text-neutral-900 dark:text-neutral-100 font-bold">
                         {row.orographic}
                       </span>
                     </td>
@@ -660,14 +660,14 @@ export default function VerificationPage() {
         </div>
 
         {/* Right Panel (4 cols): District Bias Correction Map */}
-        <div className="lg:col-span-4 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4 flex flex-col justify-between">
+        <div className="lg:col-span-4 bg-white dark:bg-[#141414] rounded-lg p-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                   District Bias Correction Map
                 </span>
-                <span className="text-[9px] px-2 py-0.5 rounded-full border border-neutral-200 dark:border-[#262626] text-neutral-500 dark:text-neutral-400">
+                <span className="text-[9px] px-2 py-0.5 rounded-full text-neutral-500 dark:text-neutral-400">
                   736 Dists
                 </span>
               </div>
@@ -684,7 +684,7 @@ export default function VerificationPage() {
             </p>
 
             {/* India Outline Mini Canvas */}
-            <div className="relative w-full h-[145px] bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg border border-neutral-200 dark:border-[#262626] p-2 flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-[145px] bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg p-2 flex items-center justify-center overflow-hidden">
               <svg viewBox="0 0 200 160" className="w-full h-full max-h-[140px]">
                 {/* Simplified India Territorial Outline */}
                 <polygon
@@ -725,7 +725,7 @@ export default function VerificationPage() {
       </div>
 
       {/* 5. Bottom Global Telemetry Status Bar */}
-      <div className="p-2.5 rounded-lg bg-neutral-50 dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] text-[10px] font-mono text-neutral-500 dark:text-neutral-400 flex flex-wrap items-center justify-between gap-3">
+      <div className="p-2.5 rounded-lg bg-neutral-50 dark:bg-[#141414] text-[10px] font-mono text-neutral-500 dark:text-neutral-400 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-1.5">
             <span className="text-neutral-400 dark:text-neutral-500">Statistical Engine:</span>

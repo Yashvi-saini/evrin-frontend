@@ -70,7 +70,7 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-      <div className="w-full max-w-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-xl shadow-2xl overflow-hidden font-mono text-xs">
+      <div className="w-full max-w-lg bg-white dark:bg-[#141414] rounded-xl shadow-2xl overflow-hidden font-mono text-xs">
         {/* Header */}
         <div className="px-5 py-4 border-b border-neutral-200 dark:border-[#262626] flex items-center justify-between bg-neutral-50 dark:bg-[#0A0A0A]">
           <div className="flex items-center gap-2.5">
@@ -80,7 +80,7 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
             <div>
               <div className="font-bold text-neutral-900 dark:text-neutral-100 text-sm tracking-wide flex items-center gap-2">
                 <span>EVRIN AI INFERENCE ENGINE</span>
-                <span className="text-[10px] text-sky-400 bg-sky-950/80 px-1.5 py-0.5 rounded border border-sky-800/60">
+                <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-mono">
                   v1.0-sim
                 </span>
               </div>
@@ -90,9 +90,9 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
             </div>
           </div>
           {isFinished ? (
-            <Badge variant="success">COMPLETE</Badge>
+            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">COMPLETE</span>
           ) : (
-            <Badge variant="info">EXECUTING</Badge>
+            <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">EXECUTING</span>
           )}
         </div>
 
@@ -109,7 +109,7 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
                   isRunning
                     ? 'bg-sky-50 dark:bg-sky-950/30 border-sky-400 dark:border-sky-800 text-sky-900 dark:text-sky-200'
                     : isCompleted
-                    ? 'bg-neutral-100 dark:bg-[#1a1a1a] border-neutral-200 dark:border-[#262626] text-neutral-800 dark:text-neutral-200'
+                    ? 'border-neutral-200 dark:border-[#262626] text-neutral-800 dark:text-neutral-200'
                     : 'bg-neutral-50 dark:bg-[#141414] border-neutral-200 dark:border-[#262626]/60 text-neutral-400 dark:text-neutral-500'
                 }`}
               >
@@ -147,9 +147,9 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
         <div className="px-5 py-4 border-t border-neutral-200 dark:border-[#262626] bg-white dark:bg-[#141414] flex items-center justify-between">
           {isFinished ? (
             <div className="w-full space-y-3">
-              <div className="p-2.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 font-semibold flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="shrink-0" /> EVRIN FORECAST READY</span>
-                <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">Calibrated in 2.9s</span>
+              <div className="py-1 px-0.5 text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 font-bold"><CheckCircle2 size={14} className="shrink-0 text-emerald-500" /> EVRIN FORECAST READY</span>
+                <span className="text-[10px] font-mono text-neutral-500 dark:text-neutral-400">Calibrated in 2.9s</span>
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="primary" size="sm" onClick={onClose} className="w-full">
@@ -166,12 +166,6 @@ export function ExecutionModal({ isOpen, onClose }: ExecutionModalProps) {
               <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500">Do not close modal</span>
             </div>
           )}
-        </div>
-
-        {/* Prototype Honesty Disclaimer */}
-        <div className="px-5 py-2 bg-neutral-50 dark:bg-[#0A0A0A] border-t border-neutral-200 dark:border-[#262626] text-[10px] text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5">
-          <Info size={11} className="text-neutral-400 shrink-0" />
-          <span>Frontend simulation of ML post-processing pipeline sequence.</span>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/shared/ui/badge';
@@ -135,7 +135,7 @@ export default function DataPage() {
 
       {/* 4 Ingestion Telemetry Metric KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414]">
           <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Total Daily Ingestion Volume</div>
           <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
             48.2 GB
@@ -143,7 +143,7 @@ export default function DataPage() {
           <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-1">GRIB2 + NetCDF-4 Streams</div>
         </div>
 
-        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414]">
           <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Average Ingestion Latency</div>
           <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
             26.4 sec
@@ -151,7 +151,7 @@ export default function DataPage() {
           <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-1">Dissemination to GPU Memory</div>
         </div>
 
-        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414]">
           <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">DWR Radar Coverage</div>
           <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
             34 Stations
@@ -159,7 +159,7 @@ export default function DataPage() {
           <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mt-1">Nowcasting Doppler Mosaic Active</div>
         </div>
 
-        <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626]">
+        <div className="p-3 rounded-lg bg-white dark:bg-[#141414]">
           <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">Grid Interpolation Fidelity</div>
           <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100 font-mono">
             0.05° (~5 km)
@@ -169,7 +169,7 @@ export default function DataPage() {
       </div>
 
       {/* Ingestion Latency Timeline Visualization */}
-      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4">
+      <div className="bg-white dark:bg-[#141414] rounded-lg p-4">
         <div className="flex items-center justify-between pb-2.5 border-b border-neutral-200 dark:border-[#262626] mb-3">
           <div className="flex items-center gap-2">
             <Radio size={14} className="text-neutral-600 dark:text-neutral-400" />
@@ -184,7 +184,7 @@ export default function DataPage() {
         </div>
 
         {/* SVG Latency Barcode Sparkline */}
-        <div className="w-full h-20 bg-neutral-50 dark:bg-[#0A0A0A] rounded border border-neutral-200 dark:border-[#262626] p-2 flex items-end gap-[2px]">
+        <div className="w-full h-20 bg-neutral-50 dark:bg-[#0A0A0A] rounded p-2 flex items-end gap-[2px]">
           {Array.from({ length: 48 }).map((_, idx) => {
             const h = 25 + Math.sin(idx * 0.4) * 15 + (idx % 7 === 0 ? 35 : 0);
             const isBurst = idx % 7 === 0;
@@ -221,7 +221,7 @@ export default function DataPage() {
       </div>
 
       {/* Main Meteorological Feeds Table */}
-      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4">
+      <div className="bg-white dark:bg-[#141414] rounded-lg p-4">
         <div className="flex items-center justify-between pb-2.5 border-b border-neutral-200 dark:border-[#262626] mb-3">
           <div className="flex items-center gap-2">
             <Server size={14} className="text-neutral-600 dark:text-neutral-400" />
@@ -258,7 +258,7 @@ export default function DataPage() {
                   <td className="py-3 px-3 text-neutral-500 dark:text-neutral-400">{feed.cycle}</td>
                   <td className="py-3 px-3 text-neutral-700 dark:text-neutral-300">{feed.latency}</td>
                   <td className="py-3 px-3 text-right">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-neutral-100 dark:bg-[#1a1a1a] text-neutral-800 dark:text-neutral-200 border border-neutral-300 dark:border-[#262626]">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold text-neutral-800 dark:text-neutral-200">
                       {feed.status}
                     </span>
                   </td>

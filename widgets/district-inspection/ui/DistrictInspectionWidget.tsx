@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { Badge } from '@/shared/ui/badge';
@@ -13,7 +13,7 @@ export function DistrictInspectionWidget() {
   const quantiles = forecast.corrected.quantiles;
 
   return (
-    <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 text-xs select-none transition-colors shadow-sm">
+    <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 text-xs select-none transition-colors shadow-sm">
       {/* Header matching Image 2 */}
       <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-2.5">
         <span className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-semibold">
@@ -32,7 +32,7 @@ export function DistrictInspectionWidget() {
       {/* Two Comparison Boxes */}
       <div className="grid grid-cols-2 gap-2.5 mb-2.5">
         {/* Raw NWP Box */}
-        <div className="p-2.5 rounded-lg bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+        <div className="p-2.5 rounded-lg">
           <div className="text-[9px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">
             Raw NWP ({forecast.raw.modelName})
           </div>
@@ -46,7 +46,7 @@ export function DistrictInspectionWidget() {
         </div>
 
         {/* EVRIN Corrected Box */}
-        <div className="p-2.5 rounded-lg bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-300 dark:border-[#333333]">
+        <div className="p-2.5 rounded-lg border border-neutral-300 dark:border-[#333333]">
           <div className="flex items-center justify-between text-[9px] uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1 font-semibold">
             <span>EVRIN Corrected</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -62,7 +62,7 @@ export function DistrictInspectionWidget() {
       </div>
 
       {/* Post-Processing Delta Banner */}
-      <div className="p-2 rounded bg-neutral-100 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] flex items-center justify-between text-[11px] text-neutral-700 dark:text-neutral-300 mb-3">
+      <div className="p-2 rounded flex items-center justify-between text-[11px] text-neutral-700 dark:text-neutral-300 mb-3">
         <span>Post-Processing Delta:</span>
         <span className="font-semibold text-neutral-900 dark:text-white">
           {forecast.correction.delta24h > 0 ? `+${forecast.correction.delta24h.toFixed(0)} mm` : `${forecast.correction.delta24h.toFixed(0)} mm`} correction ({forecast.correction.percentageChange > 0 ? `+${forecast.correction.percentageChange.toFixed(1)}%` : `${forecast.correction.percentageChange.toFixed(1)}%`})
@@ -77,15 +77,15 @@ export function DistrictInspectionWidget() {
         </div>
 
         <div className="grid grid-cols-3 gap-1.5 mb-1.5">
-          <div className="p-1.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-center">
+          <div className="p-1.5 rounded text-center">
             <div className="text-[8px] text-neutral-400 uppercase">P50</div>
             <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">{quantiles.p50} mm</div>
           </div>
-          <div className="p-1.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-center">
+          <div className="p-1.5 rounded text-center">
             <div className="text-[8px] text-neutral-400 uppercase">P75</div>
             <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">{quantiles.p75} mm</div>
           </div>
-          <div className="p-1.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-center">
+          <div className="p-1.5 rounded text-center">
             <div className="text-[8px] text-neutral-400 uppercase">P90</div>
             <div className="text-xs font-semibold text-rose-600 dark:text-rose-400">{quantiles.p90} mm</div>
           </div>

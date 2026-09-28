@@ -169,17 +169,96 @@ const DISTRICT_DATA: DistrictRow[] = [
   },
 ];
 
+function TypewriterText({ text, speed = 25 }: { text: string; speed?: number }) {
+  const [displayed, setDisplayed] = useState('');
+
+  useEffect(() => {
+    setDisplayed('');
+    let i = 0;
+    const timer = setInterval(() => {
+      i++;
+      setDisplayed(text.slice(0, i));
+      if (i >= text.length) clearInterval(timer);
+    }, speed);
+    return () => clearInterval(timer);
+  }, [text, speed]);
+
+  return (
+    <span>
+      {displayed}
+      {displayed.length < text.length && (
+        <span className="inline-block w-1 h-3.5 ml-0.5 bg-[#1A8FCB] dark:bg-white animate-pulse align-middle" />
+      )}
+    </span>
+  );
+}
+
+function AnimatedNumber({
+  value,
+  decimals = 1,
+  prefix = '',
+  suffix = '',
+}: {
+  value: number;
+  decimals?: number;
+  prefix?: string;
+  suffix?: string;
+}) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let startTimestamp: number | null = null;
+    const duration = 700;
+
+    function step(timestamp: number) {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(ease * value);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    }
+
+    const rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
+  }, [value]);
+
+  return (
+    <span>
+      {prefix}
+      {displayValue.toLocaleString(undefined, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })}
+      {suffix}
+    </span>
+  );
+}
+
 export default function ForecastPage() {
   const { activeScenario } = useForecastRepository();
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictRow>(DISTRICT_DATA[0]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTier, setSelectedTier] = useState<string>('ALL');
   const [isAnimated, setIsAnimated] = useState(false);
+  const [isDetailAnimated, setIsDetailAnimated] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsAnimated(true), 50);
+    const timer = setTimeout(() => {
+      setIsAnimated(true);
+      setIsDetailAnimated(true);
+    }, 50);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleSelectDistrict = (d: DistrictRow) => {
+    if (d.id === selectedDistrict.id) return;
+    setIsDetailAnimated(false);
+    setSelectedDistrict(d);
+    setTimeout(() => setIsDetailAnimated(true), 35);
+  };
 
   // Filtered districts
   const filteredDistricts = DISTRICT_DATA.filter((d) => {
@@ -191,26 +270,35 @@ export default function ForecastPage() {
     return true;
   });
 
-  // Simulated 48h hourly rainfall profile for hyetograph (mm/h)
-  const hyetographData = [
-    { hour: '06Z', rain: 2.1, ecmwfAccum: 2, evrinAccum: 2 },
-    { hour: '08Z', rain: 4.5, ecmwfAccum: 6, evrinAccum: 7 },
-    { hour: '10Z', rain: 8.2, ecmwfAccum: 12, evrinAccum: 16 },
-    { hour: '12Z', rain: 14.8, ecmwfAccum: 20, evrinAccum: 31 },
-    { hour: '14Z', rain: 26.5, ecmwfAccum: 32, evrinAccum: 58 },
-    { hour: '16Z', rain: 34.2, ecmwfAccum: 45, evrinAccum: 92 }, // Peak Convective Burst
-    { hour: '18Z', rain: 22.0, ecmwfAccum: 52, evrinAccum: 114 },
-    { hour: '20Z', rain: 8.4, ecmwfAccum: 56, evrinAccum: 122 },
-    { hour: '22Z', rain: 3.2, ecmwfAccum: 58, evrinAccum: 125 },
-    { hour: '00Z', rain: 1.5, ecmwfAccum: 60, evrinAccum: 127 },
-    { hour: '06Z', rain: 0.8, ecmwfAccum: 62, evrinAccum: 128 },
-    { hour: '12Z', rain: 0.4, ecmwfAccum: 64, evrinAccum: 128.4 },
-  ];
+  // Dynamic calculated metrics for the selected district
+  const scale = selectedDistrict.evrinMoe / 128.4;
+  const peakRain = Number((34.2 * scale).toFixed(1));
+  const p10Value = Number((selectedDistrict.evrinMoe * 0.639).toFixed(1));
+  const p50Value = Number((selectedDistrict.evrinMoe * 0.892).toFixed(1));
+  const p90Value = Number((selectedDistrict.evrinMoe * 1.154).toFixed(1));
+  const pwatValue = Number((52 + (selectedDistrict.evrinMoe % 16)).toFixed(1));
+  const capeValue = Math.round(1800 + (selectedDistrict.evrinMoe * 10.7));
+  const spreadMin = Math.round(selectedDistrict.evrinMoe * 0.64);
+  const spreadMax = Math.round(selectedDistrict.evrinMoe * 1.20);
+  const riseTime = (1.5 + (selectedDistrict.evrinMoe % 2.5)).toFixed(1);
+
+  // Simulated 48h hourly rainfall profile dynamically scaled to the selected district
+  const baseProfile = [2.1, 4.5, 8.2, 14.8, 26.5, 34.2, 22.0, 8.4, 3.2, 1.5, 0.8, 0.4];
+  const hours = ['06Z', '08Z', '10Z', '12Z', '14Z', '16Z', '18Z', '20Z', '22Z', '00Z', '06Z', '12Z'];
+  const hyetographData = hours.map((hour, i) => {
+    const rain = Number((baseProfile[i] * scale).toFixed(1));
+    return {
+      hour,
+      rain,
+      ecmwfAccum: Math.round(selectedDistrict.rawNwp * ((i + 1) / 12)),
+      evrinAccum: Math.round(selectedDistrict.evrinMoe * ((i + 1) / 12)),
+    };
+  });
 
   return (
     <div className="space-y-3.5 max-w-[1700px] mx-auto select-none">
       {/* Top Header matching Image: District Grid Forecast Explorer */}
-      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 transition-colors shadow-sm">
+      <div className="bg-white dark:bg-[#141414] rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 transition-colors shadow-sm">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
@@ -228,7 +316,7 @@ export default function ForecastPage() {
         {/* Filters Bar: Search, State, Threshold Pills */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {/* Search Input */}
-          <div className="flex items-center gap-1.5 bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] rounded-full px-3 py-1">
+          <div className="flex items-center gap-1.5 rounded-full px-3 py-1">
             <Search size={13} className="text-neutral-400 shrink-0" />
             <input
               type="text"
@@ -240,7 +328,7 @@ export default function ForecastPage() {
           </div>
 
           {/* State Dropdown Pill */}
-          <div className="bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] rounded-full px-3 py-1 text-[11px] text-neutral-700 dark:text-neutral-300">
+          <div className="rounded-full px-3 py-1 text-[11px] text-neutral-700 dark:text-neutral-300">
             <span>STATE: </span>
             <span className="text-neutral-900 dark:text-white font-semibold">Uttar Pradesh ▾</span>
           </div>
@@ -277,7 +365,7 @@ export default function ForecastPage() {
             >
               &gt;115.6mm
             </button>
-            <span className="px-2.5 py-1 rounded-full bg-transparent border border-neutral-300 dark:border-[#262626] text-[10px] text-neutral-500 dark:text-neutral-400">
+            <span className="px-2.5 py-1 rounded-full bg-transparent text-[10px] text-neutral-500 dark:text-neutral-400">
               STAT: <strong className="text-neutral-800 dark:text-neutral-200">P90 PEAK</strong>
             </span>
           </div>
@@ -287,7 +375,7 @@ export default function ForecastPage() {
       {/* Main Layout Grid: Responsive Left Table & Right Hyetograph Detail */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
         {/* Left Section: Interactive District Grid Table */}
-        <div className="lg:col-span-6 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3 flex flex-col justify-between transition-colors shadow-sm">
+        <div className="lg:col-span-6 bg-white dark:bg-[#141414] rounded-lg p-3 flex flex-col justify-between transition-colors shadow-sm">
           <div>
             {/* Table Summary Bar */}
             <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-2 text-[10px] text-neutral-500 dark:text-neutral-400">
@@ -325,10 +413,10 @@ export default function ForecastPage() {
                     return (
                       <tr
                         key={d.id}
-                        onClick={() => setSelectedDistrict(d)}
+                        onClick={() => handleSelectDistrict(d)}
                         className={`cursor-pointer transition-colors ${
                           isSelected
-                            ? 'bg-neutral-100 dark:bg-[#1a1a1a] text-neutral-900 dark:text-neutral-100 font-semibold'
+                            ? 'text-neutral-900 dark:text-neutral-100 font-semibold'
                             : 'hover:bg-neutral-50 dark:hover:bg-[#161616] text-neutral-700 dark:text-neutral-300'
                         }`}
                       >
@@ -342,7 +430,7 @@ export default function ForecastPage() {
                           </div>
                         </td>
                         <td className="py-2.5">
-                          <span className="px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-[9px] text-neutral-600 dark:text-neutral-400">
+                          <span className="px-2 py-0.5 rounded-full text-[9px] text-neutral-600 dark:text-neutral-400">
                             {d.regime}
                           </span>
                         </td>
@@ -374,7 +462,7 @@ export default function ForecastPage() {
         {/* Right Section: 48-Hour Hyetograph & Runoff Visualizer */}
         <div className="lg:col-span-6 space-y-3.5">
           {/* Card 1: Top District Header with Metadata & Bulletin Button */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 transition-colors shadow-sm">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 transition-colors shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-neutral-200 dark:border-[#262626] mb-2.5">
               <div className="flex items-center gap-2">
                 <Badge variant="danger" size="sm">
@@ -385,13 +473,13 @@ export default function ForecastPage() {
               <div className="flex items-center gap-2">
                 <button
                   title="Pin Station"
-                  className="p-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
+                  className="p-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
                 >
                   <Pin size={12} className="shrink-0" />
                 </button>
                 <button
                   title="Export Station Data"
-                  className="p-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] border border-neutral-300 dark:border-[#262626] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
+                  className="p-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1a1a1a] text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
                 >
                   <Download size={12} className="shrink-0" />
                 </button>
@@ -407,10 +495,10 @@ export default function ForecastPage() {
 
             {/* Station Title & Geodetic Profile */}
             <div className="text-base font-bold text-neutral-900 dark:text-slate-100 tracking-tight mb-2">
-              {selectedDistrict.name} <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">({selectedDistrict.subRegion.split('-')[0]})</span>
+              <TypewriterText key={selectedDistrict.id} text={selectedDistrict.name} speed={30} /> <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">({selectedDistrict.subRegion.split('-')[0]})</span>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] text-neutral-600 dark:text-neutral-400 bg-neutral-50 dark:bg-[#1a1a1a] p-2.5 rounded-lg border border-neutral-200 dark:border-[#262626]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] text-neutral-600 dark:text-neutral-400 p-2.5 rounded-lg">
               <div>
                 <span className="text-neutral-400 uppercase">LAT:</span>{' '}
                 <strong className="text-neutral-800 dark:text-slate-200">{selectedDistrict.lat.toFixed(4)}° N</strong>
@@ -425,13 +513,15 @@ export default function ForecastPage() {
               </div>
               <div>
                 <span className="text-neutral-400 uppercase">CATCHMENT:</span>{' '}
-                <strong className="text-neutral-900 dark:text-white truncate block">{selectedDistrict.catchment}</strong>
+                <strong className="text-neutral-900 dark:text-white truncate block">
+                  <TypewriterText key={`${selectedDistrict.id}-catch`} text={selectedDistrict.catchment} speed={20} />
+                </strong>
               </div>
             </div>
           </div>
 
           {/* Card 2: 48-Hour Hyetograph & Runoff Chart */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 space-y-3 transition-colors shadow-sm">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 space-y-3 transition-colors shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-neutral-200 dark:border-[#262626]">
               <div>
                 <div className="text-xs font-bold text-neutral-900 dark:text-slate-100 uppercase tracking-tight flex items-center gap-1.5">
@@ -461,7 +551,7 @@ export default function ForecastPage() {
             </div>
 
             {/* High-Precision Hyetograph SVG Chart with Threshold Lines */}
-            <div className="relative w-full h-52 bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg border border-neutral-200 dark:border-[#262626] p-2 overflow-hidden">
+            <div className="relative w-full h-52 bg-neutral-50 dark:bg-[#0A0A0A] rounded-lg p-2 overflow-hidden">
               <svg viewBox="0 0 600 200" className="w-full h-full">
                 {/* Background Grid Lines */}
                 <line x1="40" y1="20" x2="580" y2="20" stroke="#333333" strokeWidth="0.5" strokeOpacity="0.4" />
@@ -484,11 +574,11 @@ export default function ForecastPage() {
                 {/* Hourly Hyetograph Bars */}
                 {hyetographData.map((d, idx) => {
                   const x = 50 + idx * 44;
-                  const barHeight = isAnimated ? (d.rain / 40) * 120 : 0;
+                  const barHeight = isDetailAnimated ? (d.rain / 40) * 120 : 0;
                   const y = 170 - barHeight;
 
                   return (
-                    <g key={d.hour}>
+                    <g key={`${selectedDistrict.id}-${d.hour}`}>
                       <rect
                         x={x}
                         y={y}
@@ -497,7 +587,7 @@ export default function ForecastPage() {
                         fill={d.rain > 25 ? '#dc2626' : d.rain > 15 ? '#d97706' : '#525252'}
                         rx="2"
                         opacity="0.85"
-                        style={{ transition: `height 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms, y 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 40}ms` }}
+                        style={{ transition: `height 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 35}ms, y 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${idx * 35}ms` }}
                       />
                       {/* X-axis labels */}
                       <text x={x + 9} y="185" fill="#737373" fontSize="8" textAnchor="middle">
@@ -514,8 +604,8 @@ export default function ForecastPage() {
                   stroke="#737373"
                   strokeWidth="1.5"
                   strokeDasharray="700"
-                  strokeDashoffset={isAnimated ? 0 : 700}
-                  style={{ transition: 'stroke-dashoffset 1.4s ease-out 0.4s' }}
+                  strokeDashoffset={isDetailAnimated ? 0 : 700}
+                  style={{ transition: 'stroke-dashoffset 1.2s ease-out 0.3s' }}
                 />
 
                 {/* EVRIN P90 Calibrated Runoff Curve */}
@@ -525,15 +615,15 @@ export default function ForecastPage() {
                   stroke="#0284c7"
                   strokeWidth="2.5"
                   strokeDasharray="700"
-                  strokeDashoffset={isAnimated ? 0 : 700}
-                  style={{ transition: 'stroke-dashoffset 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s' }}
+                  strokeDashoffset={isDetailAnimated ? 0 : 700}
+                  style={{ transition: 'stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.4s' }}
                 />
 
                 {/* Peak Convective Burst Callout Badge */}
                 <g transform="translate(260, 20)">
                   <rect x="0" y="0" width="200" height="18" rx="4" fill="#141414" stroke="#262626" strokeWidth="1" />
                   <text x="100" y="12" fill="#ef4444" fontSize="8" fontWeight="bold" textAnchor="middle">
-                    PEAK CONVECTIVE BURST: 34.2 mm/h [16:00 UTC]
+                    PEAK CONVECTIVE BURST: {peakRain} mm/h [16:00 UTC]
                   </text>
                 </g>
               </svg>
@@ -542,31 +632,39 @@ export default function ForecastPage() {
             {/* 4 Metric Summary Boxes */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
               {/* Box 1: 48H TOTAL ACCUM */}
-              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a]">
                 <div className="text-[9px] text-neutral-400 uppercase">48H TOTAL ACCUM</div>
-                <div className="text-sm font-bold text-neutral-900 dark:text-white mt-0.5">{selectedDistrict.evrinMoe} mm</div>
-                <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">+136% vs GFS Raw</div>
+                <div className="text-sm font-bold text-neutral-900 dark:text-white mt-0.5">
+                  <AnimatedNumber value={selectedDistrict.evrinMoe} decimals={1} suffix=" mm" />
+                </div>
+                <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
+                  +{Math.round(((selectedDistrict.evrinMoe - selectedDistrict.rawNwp) / selectedDistrict.rawNwp) * 100)}% vs Raw
+                </div>
               </div>
 
               {/* Box 2: PEAK HOURLY RATE */}
-              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a]">
                 <div className="text-[9px] text-neutral-400 uppercase">PEAK HOURLY RATE</div>
-                <div className="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">34.2 mm/h</div>
+                <div className="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">
+                  <AnimatedNumber value={peakRain} decimals={1} suffix=" mm/h" />
+                </div>
                 <div className="text-[9px] text-neutral-400 mt-0.5">AT 16:00 UTC (+10h)</div>
               </div>
 
               {/* Box 3: ENSEMBLE SPREAD */}
-              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a]">
                 <div className="text-[9px] text-neutral-400 uppercase">ENSEMBLE SPREAD</div>
-                <div className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mt-0.5">82–154 mm</div>
+                <div className="text-sm font-bold text-neutral-900 dark:text-neutral-100 mt-0.5">
+                  <AnimatedNumber value={spreadMin} decimals={0} />–<AnimatedNumber value={spreadMax} decimals={0} suffix=" mm" />
+                </div>
                 <div className="text-[9px] text-neutral-500 mt-0.5">High Convergence</div>
               </div>
 
               {/* Box 4: FLASH FLOOD SEVERITY */}
-              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+              <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a]">
                 <div className="text-[9px] text-neutral-400 uppercase">FLASH FLOOD SEVERITY</div>
-                <div className="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">CRITICAL</div>
-                <div className="text-[9px] text-neutral-400 mt-0.5">RISE TIME: 2.1 HRS</div>
+                <div className="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">{selectedDistrict.alertLevel}</div>
+                <div className="text-[9px] text-neutral-400 mt-0.5">RISE TIME: {riseTime} HRS</div>
               </div>
             </div>
           </div>
@@ -574,7 +672,7 @@ export default function ForecastPage() {
           {/* Bottom 2 Cards matching Image: Ensemble Plume & Atmospheric Sounding */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Card A: 51-Member Ensemble Plume */}
-            <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3 transition-colors">
+            <div className="bg-white dark:bg-[#141414] rounded-lg p-3 transition-colors">
               <div className="flex items-center justify-between pb-1.5 border-b border-neutral-200 dark:border-[#262626] mb-2 text-[10px]">
                 <span className="font-semibold text-neutral-900 dark:text-slate-100">51-Member Ensemble Plume</span>
                 <Badge variant="pill-subtle" className="text-[9px]">EPS + GEFS</Badge>
@@ -587,62 +685,72 @@ export default function ForecastPage() {
                 <div>
                   <div className="flex justify-between text-neutral-600 dark:text-neutral-400 mb-0.5">
                     <span>P10 (Minimum Safe Estimate)</span>
-                    <strong className="text-neutral-800 dark:text-slate-200">82.1 mm</strong>
+                    <strong className="text-neutral-800 dark:text-slate-200">
+                      <AnimatedNumber value={p10Value} decimals={1} suffix=" mm" />
+                    </strong>
                   </div>
                   <div className="w-full bg-neutral-100 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-neutral-400 dark:bg-neutral-600 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isAnimated ? '55%' : '0%' }} />
+                    <div className="bg-neutral-400 dark:bg-neutral-600 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isDetailAnimated ? '55%' : '0%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-neutral-600 dark:text-neutral-400 mb-0.5">
                     <span>P50 (Median Calibration)</span>
-                    <strong className="text-neutral-900 dark:text-white">114.5 mm</strong>
+                    <strong className="text-neutral-900 dark:text-white">
+                      <AnimatedNumber value={p50Value} decimals={1} suffix=" mm" />
+                    </strong>
                   </div>
                   <div className="w-full bg-neutral-100 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isAnimated ? '75%' : '0%' }} />
+                    <div className="bg-emerald-500 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isDetailAnimated ? '75%' : '0%' }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-neutral-600 dark:text-neutral-400 mb-0.5">
                     <span>P90 (Severe Tail Risk)</span>
-                    <strong className="text-rose-600 dark:text-rose-400">148.2 mm</strong>
+                    <strong className="text-rose-600 dark:text-rose-400">
+                      <AnimatedNumber value={p90Value} decimals={1} suffix=" mm" />
+                    </strong>
                   </div>
                   <div className="w-full bg-neutral-100 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-rose-500 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isAnimated ? '95%' : '0%' }} />
+                    <div className="bg-rose-500 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: isDetailAnimated ? '95%' : '0%' }} />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Card B: Moisture & Stability Sounding */}
-            <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3 transition-colors">
+            <div className="bg-white dark:bg-[#141414] rounded-lg p-3 transition-colors">
               <div className="flex items-center justify-between pb-1.5 border-b border-neutral-200 dark:border-[#262626] mb-2 text-[10px]">
                 <span className="font-semibold text-neutral-900 dark:text-slate-100">Moisture & Stability Sounding</span>
-                <Badge variant="pill-subtle" className="text-[9px]">DELHI-MEERUT 06Z</Badge>
+                <span className="text-[9px] uppercase font-mono text-neutral-500">{selectedDistrict.name} 06Z</span>
               </div>
               <div className="text-[9px] text-neutral-500 dark:text-neutral-400 mb-2.5">
                 Low-level tropospheric thermodynamic profile confirming deep convective initiation.
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-[10px]">
-                <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+                <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a]">
                   <div className="text-[8px] text-neutral-400 uppercase">PRECIPITABLE WATER (PWAT)</div>
-                  <div className="text-sm font-bold text-neutral-900 dark:text-white mt-0.5">62.4 mm</div>
+                  <div className="text-sm font-bold text-neutral-900 dark:text-white mt-0.5">
+                    <AnimatedNumber value={pwatValue} decimals={1} suffix=" mm" />
+                  </div>
                   <div className="text-[8px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">98th Hist. Percentile</div>
                 </div>
 
-                <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+                <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a]">
                   <div className="text-[8px] text-neutral-400 uppercase">MOST UNSTABLE CAPE</div>
-                  <div className="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">3,180 J/kg</div>
+                  <div className="text-sm font-bold text-rose-600 dark:text-rose-400 mt-0.5">
+                    <AnimatedNumber value={capeValue} decimals={0} suffix=" J/kg" />
+                  </div>
                   <div className="text-[8px] text-neutral-500 mt-0.5">Extremely Unstable</div>
                 </div>
               </div>
 
-              <div className="mt-2 pt-2 border-t border-neutral-200 dark:border-[#262626] flex justify-between text-[9px] text-neutral-500 dark:text-neutral-400">
-                <span>K-INDEX: <strong className="text-neutral-800 dark:text-slate-200">38.2°C</strong></span>
-                <span>850hPa MOISTURE: <strong className="text-neutral-800 dark:text-slate-200">18.4 g/kg</strong></span>
+              <div className="mt-2 pt-2 border-t border-neutral-200 dark:border-[#262626] flex justify-between text-[9px] text-neutral-500 dark:text-neutral-400 font-mono">
+                <span>K-INDEX: <strong className="text-neutral-800 dark:text-slate-200"><AnimatedNumber value={32 + (selectedDistrict.evrinMoe % 8)} decimals={1} suffix="°C" /></strong></span>
+                <span>850hPa MOISTURE: <strong className="text-neutral-800 dark:text-slate-200"><AnimatedNumber value={14 + (selectedDistrict.evrinMoe % 6)} decimals={1} suffix=" g/kg" /></strong></span>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/shared/ui/badge';
@@ -403,13 +403,13 @@ export default function RegimesPage() {
   return (
     <div className="space-y-4 font-mono select-none">
       {/* 1. Header Bar */}
-      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-base font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-tight">
               Atmospheric Regime Intelligence & Detection
             </h1>
-            <span className="text-[10px] px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-800 dark:text-neutral-200 font-bold bg-neutral-100 dark:bg-[#1a1a1a]">
+            <span className="text-[10px] px-2 py-0.5 rounded-full text-neutral-800 dark:text-neutral-200 font-bold">
               MoE-0.3-OPERATIONAL
             </span>
           </div>
@@ -419,7 +419,7 @@ export default function RegimesPage() {
         </div>
 
         {/* Top-Right Technical Meta Box */}
-        <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-[10px] text-neutral-500 dark:text-neutral-400 font-mono space-y-0.5">
+        <div className="p-2 rounded text-[10px] text-neutral-500 dark:text-neutral-400 font-mono space-y-0.5">
           <div className="flex items-center gap-3">
             <span>Run: <strong className="text-neutral-800 dark:text-neutral-200">2026-09-27 06Z</strong></span>
             <span>|</span>
@@ -438,7 +438,7 @@ export default function RegimesPage() {
       {/* 2. Top 4 KPI Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Card 1: Dominant Regime */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between">
           <div className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold mb-1">
             DOMINANT REGIME (ACTIVE)
           </div>
@@ -457,7 +457,7 @@ export default function RegimesPage() {
         </div>
 
         {/* Card 2: Transition Probability */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
               TRANSITION PROBABILITY (+48H)
@@ -481,7 +481,7 @@ export default function RegimesPage() {
         </div>
 
         {/* Card 3: Primary Synoptic Driver */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
               PRIMARY SYNOPTIC DRIVER
@@ -503,7 +503,7 @@ export default function RegimesPage() {
         </div>
 
         {/* Card 4: Mixture Entropy */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
               MIXTURE ENTROPY
@@ -533,7 +533,7 @@ export default function RegimesPage() {
         {/* Left Column (7 cols): Real Leaflet Map + 5-Day Stacked Evolution */}
         <div className="lg:col-span-7 space-y-4">
           {/* Top Panel: Real Leaflet Map for Synoptic Regime Flow & District Classification */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 overflow-hidden flex flex-col justify-between">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 overflow-hidden flex flex-col justify-between">
             <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-neutral-200 dark:border-[#262626] mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
@@ -542,7 +542,7 @@ export default function RegimesPage() {
               </div>
               <div className="flex items-center gap-2 text-[10px] text-neutral-500 dark:text-neutral-400 font-mono">
                 <span>[Domain: 08°N-37°N, 68°E-98°E]</span>
-                <span className="px-1.5 py-0.5 rounded border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 font-bold bg-neutral-100 dark:bg-[#1a1a1a]">
+                <span className="px-1.5 py-0.5 rounded text-neutral-700 dark:text-neutral-300 font-bold">
                   LIVE VECTOR FIELD
                 </span>
               </div>
@@ -575,7 +575,7 @@ export default function RegimesPage() {
             </div>
 
             {/* Real Geographic Leaflet Map Canvas (Full Bleed, No Gaps) */}
-            <div className="relative w-full h-[320px] min-h-[320px] flex-1 bg-neutral-100 dark:bg-[#0A0A0A] rounded-lg overflow-hidden border border-neutral-200 dark:border-[#262626]">
+            <div className="relative w-full h-[320px] min-h-[320px] flex-1 bg-neutral-100 dark:bg-[#0A0A0A] rounded-lg overflow-hidden">
               <div
                 ref={mapContainerRef}
                 className="w-full h-full min-h-[320px] z-0 bg-neutral-100 dark:bg-[#0A0A0A]"
@@ -619,7 +619,7 @@ export default function RegimesPage() {
           </div>
 
           {/* Bottom Panel: 5-Day Regime Transition Stacked Bar Chart */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5">
             <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-neutral-200 dark:border-[#262626] mb-2.5">
               <div>
                 <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
@@ -662,7 +662,7 @@ export default function RegimesPage() {
                     </div>
 
                     {/* Stacked Vertical Bar */}
-                    <div className="w-full max-w-[46px] h-36 bg-neutral-100 dark:bg-[#0A0A0A] rounded overflow-hidden flex flex-col-reverse border border-neutral-200 dark:border-[#262626] my-1">
+                    <div className="w-full max-w-[46px] h-36 bg-neutral-100 dark:bg-[#0A0A0A] rounded overflow-hidden flex flex-col-reverse my-1">
                       {/* Active (Bottom) */}
                       <div
                         className="w-full bg-emerald-500 transition-all ease-out"
@@ -707,12 +707,12 @@ export default function RegimesPage() {
         {/* Right Column (5 cols): Diagnostic Profile, Bias Factors & MoE Weights */}
         <div className="lg:col-span-5 space-y-3.5">
           {/* Card 1: Regime Diagnostic Profile */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5">
             <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-2">
               <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                 Regime Diagnostic Profile: Active Monsoon
               </span>
-              <span className="text-[9px] px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 font-bold bg-neutral-100 dark:bg-[#1a1a1a]">
+              <span className="text-[9px] px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300 font-bold">
                 STATE-MATCH 98%
               </span>
             </div>
@@ -726,7 +726,7 @@ export default function RegimesPage() {
                   </div>
                   <div className="flex items-center justify-between text-[9px]">
                     <span className="text-neutral-500 dark:text-neutral-400 font-sans">{p.desc}</span>
-                    <span className="px-1.5 py-0.5 rounded border border-neutral-200 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 bg-neutral-50 dark:bg-[#1a1a1a] font-semibold">
+                    <span className="px-1.5 py-0.5 rounded text-neutral-700 dark:text-neutral-300 font-semibold">
                       {p.badge}
                     </span>
                   </div>
@@ -736,7 +736,7 @@ export default function RegimesPage() {
           </div>
 
           {/* Card 2: Regime-Dependent Bias Correction Factors */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5">
             <div className="flex items-center justify-between pb-1.5 border-b border-neutral-200 dark:border-[#262626] mb-1.5">
               <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                 Regime Dependent Bias Correction Factors
@@ -749,7 +749,7 @@ export default function RegimesPage() {
 
             <div className="space-y-2">
               {biasCorrectionFactors.map((item) => (
-                <div key={item.regime} className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-[10px] font-mono">
+                <div key={item.regime} className="p-2 rounded text-[10px] font-mono">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5">
                       <span className={`w-1.5 h-1.5 rounded-full ${item.dotColor}`} />
@@ -766,12 +766,12 @@ export default function RegimesPage() {
           </div>
 
           {/* Card 3: Mixture of Experts (MoE) Sub-Model Weights */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5">
             <div className="flex items-center justify-between pb-1.5 border-b border-neutral-200 dark:border-[#262626] mb-2">
               <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                 Mixture of Experts (MoE) Sub-Model Weights
               </span>
-              <span className="text-[9px] px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 font-bold bg-neutral-100 dark:bg-[#1a1a1a]">
+              <span className="text-[9px] px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300 font-bold">
                 Σ = 1.00
               </span>
             </div>

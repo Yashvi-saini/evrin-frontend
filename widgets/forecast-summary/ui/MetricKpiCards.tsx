@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { Card } from '@/shared/ui/card';
@@ -39,7 +39,7 @@ export function MetricKpiCards() {
               const runBtn = document.querySelector('header button');
               if (runBtn) (runBtn as HTMLButtonElement).click();
             }}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#161616] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white border border-neutral-300 dark:border-[#262626] text-xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#161616] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white text-xs transition-colors"
           >
             <RefreshCw size={11} className="text-neutral-500 dark:text-neutral-400" />
             <span>Re-compute</span>
@@ -50,7 +50,7 @@ export function MetricKpiCards() {
       {/* 4 KPI Cards Row matching Image 2 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Card 1: CURRENT REGIME */}
-        <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
+        <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
             <span>CURRENT REGIME</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -65,7 +65,7 @@ export function MetricKpiCards() {
         </div>
 
         {/* Card 2: HEAVY RAINFALL RISK */}
-        <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
+        <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
             <span>HEAVY RAINFALL RISK</span>
             <Badge variant="danger" size="sm">ALERT</Badge>
@@ -80,7 +80,7 @@ export function MetricKpiCards() {
         </div>
 
         {/* Card 3: CORRECTION IMPACT */}
-        <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
+        <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
             <span>CORRECTION IMPACT</span>
             <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-0.5"><TrendingDown size={12} className="shrink-0" /> RMSE</span>
@@ -95,7 +95,7 @@ export function MetricKpiCards() {
         </div>
 
         {/* Card 4: FORECAST CONFIDENCE */}
-        <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
+        <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 flex flex-col justify-between transition-colors shadow-sm">
           <div className="flex items-center justify-between text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
             <span>FORECAST CONFIDENCE</span>
             <span className="text-[10px] text-neutral-400">P50/P90</span>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { MapLayerId } from '../model/types';
@@ -18,7 +18,7 @@ export function MapLegend({ activeLayer }: MapLegendProps) {
       { val: '>+80mm', label: 'Heavy Uplift', color: '#38bdf8' },
     ];
     return (
-      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
         <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
           <span>BIAS DELTA ANOMALY</span>
           <span className="text-cyan-400">EVRIN - NWP (mm)</span>
@@ -43,7 +43,7 @@ export function MapLegend({ activeLayer }: MapLegendProps) {
       { val: '>80%', label: 'Red Warning', color: '#ef4444' },
     ];
     return (
-      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
         <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
           <span>IMD EXTREME PROBABILITY</span>
           <span className="text-rose-400">&gt;64.5mm / 24h</span>
@@ -62,7 +62,7 @@ export function MapLegend({ activeLayer }: MapLegendProps) {
 
   if (activeLayer === 'regime') {
     return (
-      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
         <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
           <span>SYNOPTIC REGIME FLOW</span>
           <span className="text-teal-400">MoE CLASSIFIER</span>
@@ -85,7 +85,7 @@ export function MapLegend({ activeLayer }: MapLegendProps) {
       { val: '>±85mm', label: 'High Spread', color: '#ec4899' },
     ];
     return (
-      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+      <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
         <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
           <span>UNCERTAINTY ENVELOPE</span>
           <span className="text-purple-400">51-MEMBER P90</span>
@@ -113,7 +113,7 @@ export function MapLegend({ activeLayer }: MapLegendProps) {
   ];
 
   return (
-    <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur border border-neutral-200 dark:border-[#262626] p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
+    <div className="bg-white/95 dark:bg-[#141414]/95 backdrop-blur p-2 rounded-lg font-mono text-[10px] select-none shadow-sm">
       <div className="flex items-center gap-1.5 text-slate-400 uppercase tracking-wider mb-1 font-semibold text-[9px]">
         <span>{activeLayer === 'raw-nwp' ? 'RAW NWP ACCUMULATION' : 'EVRIN CALIBRATED ACCUMULATION'} (24h)</span>
         <span className="text-teal-400">mm</span>

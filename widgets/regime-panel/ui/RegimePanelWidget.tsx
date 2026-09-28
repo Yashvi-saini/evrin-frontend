@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Badge } from '@/shared/ui/badge';
@@ -26,7 +26,7 @@ export function RegimePanelWidget() {
   ];
 
   return (
-    <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 text-xs select-none transition-colors shadow-sm">
+    <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 text-xs select-none transition-colors shadow-sm">
       {/* Header matching Image 2 */}
       <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-3">
         <span className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-semibold">
@@ -71,7 +71,7 @@ export function RegimePanelWidget() {
         <div className="text-[9px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1.5 font-semibold">
           Regime Transition Timeline
         </div>
-        <div className="p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] flex flex-wrap sm:flex-nowrap gap-1.5 items-center justify-between text-[10px]">
+        <div className="p-2 rounded flex flex-wrap sm:flex-nowrap gap-1.5 items-center justify-between text-[10px]">
           <span className="text-neutral-500 dark:text-neutral-400">PAST (Break)</span>
           <span className="text-neutral-400 dark:text-neutral-600 hidden sm:inline">───</span>
           <span className="text-emerald-600 dark:text-emerald-400 font-semibold bg-transparent px-2 py-0.5 rounded-full border border-emerald-500/40">

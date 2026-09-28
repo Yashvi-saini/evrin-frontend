@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { ExecutionModal } from '@/features/run-evrin';
 
 export interface AppShellProps {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ export interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isRunModalOpen, setIsRunModalOpen] = useState(false);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#f8fafc] dark:bg-[#0A0A0A] text-neutral-900 dark:text-neutral-100 transition-colors">
@@ -17,15 +19,22 @@ export function AppShell({ children }: AppShellProps) {
       <Sidebar
         isMobileOpen={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
+        onRunEnsemble={() => setIsRunModalOpen(true)}
       />
 
       {/* Main Operational Viewport */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <Topbar onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+        <Topbar
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onRunEnsemble={() => setIsRunModalOpen(true)}
+        />
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 bg-[#f8fafc] dark:bg-[#0A0A0A]">
           {children}
         </main>
       </div>
+
+      {/* 7-Step Sequential Execution Stepper Modal */}
+      <ExecutionModal isOpen={isRunModalOpen} onClose={() => setIsRunModalOpen(false)} />
     </div>
   );
 }

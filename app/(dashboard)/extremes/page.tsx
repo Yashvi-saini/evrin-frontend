@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/shared/ui/badge';
@@ -428,7 +428,7 @@ export default function ExtremesPage() {
   return (
     <div className="space-y-4 select-none transition-colors">
       {/* 1. Header Bar matching Image 6 (media_1790525351083.png) */}
-      <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5 space-y-3 transition-colors">
+      <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5 space-y-3 transition-colors">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
@@ -448,7 +448,7 @@ export default function ExtremesPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => alert('Exporting NDMA/IMD Extreme Weather Alert Bulletin (PDF/GeoJSON)...')}
-              className="px-3 py-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1f1f1f] border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white text-xs transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#1f1f1f] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white text-xs transition-colors flex items-center gap-1.5"
             >
               <Download size={13} className="shrink-0" />
               <span>Export Alert Bulletin (NDMA/IMD Format)</span>
@@ -496,7 +496,7 @@ export default function ExtremesPage() {
       {/* 2. Top 4 KPI Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Card 1: High Risk Districts */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between transition-colors">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between transition-colors">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
               HIGH RISK DISTRICTS
@@ -512,12 +512,12 @@ export default function ExtremesPage() {
         </div>
 
         {/* Card 2: Peak Exceedance Probability */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between transition-colors">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between transition-colors">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
               PEAK EXCEEDANCE PROBABILITY
             </span>
-            <span className="text-[9px] px-1.5 py-0.2 rounded border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 font-semibold">
+            <span className="text-[9px] px-1.5 py-0.2 rounded text-neutral-700 dark:text-neutral-300 font-semibold">
               P95
             </span>
           </div>
@@ -530,7 +530,7 @@ export default function ExtremesPage() {
         </div>
 
         {/* Card 3: Lead Time to Peak */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between transition-colors">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between transition-colors">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
               LEAD TIME TO PEAK
@@ -546,7 +546,7 @@ export default function ExtremesPage() {
         </div>
 
         {/* Card 4: Population Exposed */}
-        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] flex flex-col justify-between transition-colors">
+        <div className="p-3.5 rounded-lg bg-white dark:bg-[#141414] flex flex-col justify-between transition-colors">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[10px] uppercase tracking-wider text-neutral-500 dark:text-neutral-400 font-semibold">
               POPULATION EXPOSED
@@ -565,7 +565,7 @@ export default function ExtremesPage() {
       {/* 3. Main Split Layout: Spatial Hazard Map with Real Leaflet Cartography (Left) & Alert Queue + CDF (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Column (8 cols): Spatial Hazard Map Canvas with Real Leaflet Map */}
-        <div className="lg:col-span-8 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg overflow-hidden flex flex-col justify-between">
+        <div className="lg:col-span-8 bg-white dark:bg-[#141414] rounded-lg overflow-hidden flex flex-col justify-between">
           {/* Map Header Ribbon */}
           <div className="p-3 border-b border-neutral-200 dark:border-[#262626] bg-neutral-50 dark:bg-[#141414] flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2">
@@ -615,14 +615,14 @@ export default function ExtremesPage() {
 
             {/* LLJ Arrow Callout Box */}
             <div className="absolute bottom-12 right-20 pointer-events-none z-10">
-              <div className="px-2.5 py-1 rounded bg-white/95 dark:bg-[#141414]/95 border border-neutral-300 dark:border-[#262626] text-neutral-800 dark:text-neutral-200 text-[10px] font-mono flex items-center gap-1.5 shadow-sm">
+              <div className="px-2.5 py-1 rounded bg-white/95 dark:bg-[#141414]/95 text-neutral-800 dark:text-neutral-200 text-[10px] font-mono flex items-center gap-1.5 shadow-sm">
                 <Wind size={12} className="text-cyan-500 dark:text-cyan-400" />
                 <span>LLJ: 850hPa 42kts (Moisture Core)</span>
               </div>
             </div>
 
             {/* Floating Discrete Probability Legend inside Map (Bottom Left) */}
-            <div className="absolute bottom-3 left-3 bg-white/95 dark:bg-[#141414]/95 border border-neutral-200 dark:border-[#262626] p-2 rounded text-[9px] font-mono select-none z-10 shadow-sm">
+            <div className="absolute bottom-3 left-3 bg-white/95 dark:bg-[#141414]/95 p-2 rounded text-[9px] font-mono select-none z-10 shadow-sm">
               <div className="flex justify-between items-center text-neutral-500 dark:text-neutral-400 mb-1">
                 <span>PROBABILITY EXCEEDANCE</span>
                 <span className="text-neutral-400 dark:text-neutral-500">%</span>
@@ -651,7 +651,7 @@ export default function ExtremesPage() {
           <div className="p-2.5 border-t border-neutral-200 dark:border-[#262626] bg-neutral-50 dark:bg-[#141414] flex flex-wrap items-center justify-between gap-2 z-10 text-[10px] font-mono">
             <div className="flex items-center gap-2">
               <span className="text-neutral-500 dark:text-neutral-400 font-semibold uppercase">TEMPORAL FORECAST HORIZON</span>
-              <span className="px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-900 dark:text-neutral-100 font-bold bg-neutral-100 dark:bg-[#1a1a1a]">
+              <span className="px-2 py-0.5 rounded-full text-neutral-900 dark:text-neutral-100 font-bold">
                 +24h (28 Sep 06Z)
               </span>
             </div>
@@ -695,7 +695,7 @@ export default function ExtremesPage() {
         {/* Right Column (4 cols): Priority Alert Queue, Tail-Risk CDF, and Physics Attribution */}
         <div className="lg:col-span-4 space-y-3.5">
           {/* Card 1: Priority Alert Queue */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5">
             <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-2.5">
               <div className="flex items-center gap-1.5">
                 <AlertTriangle size={14} className="text-rose-500" />
@@ -712,7 +712,7 @@ export default function ExtremesPage() {
               {alertQueueItems.map((item) => (
                 <div
                   key={item.district}
-                  className="p-2.5 rounded-lg bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-xs font-mono"
+                  className="p-2.5 rounded-lg text-xs font-mono"
                 >
                   <div className="flex items-baseline justify-between mb-1">
                     <div className="flex items-center gap-1.5">
@@ -737,12 +737,12 @@ export default function ExtremesPage() {
           </div>
 
           {/* Card 2: Threshold CDF Tail-Risk */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5">
             <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-1.5">
               <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                 Threshold CDF Tail-Risk
               </span>
-              <span className="text-[9px] px-2 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 font-bold bg-neutral-100 dark:bg-[#1a1a1a]">
+              <span className="text-[9px] px-2 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300 font-bold">
                 MoE BOOSTED
               </span>
             </div>
@@ -751,7 +751,7 @@ export default function ExtremesPage() {
             </p>
 
             {/* SVG S-Curve Plot */}
-            <div className="w-full h-28 bg-neutral-50 dark:bg-[#0A0A0A] rounded border border-neutral-200 dark:border-[#262626] p-2 flex items-center justify-center relative">
+            <div className="w-full h-28 bg-neutral-50 dark:bg-[#0A0A0A] rounded p-2 flex items-center justify-center relative">
               <svg viewBox="0 0 300 90" className="w-full h-full">
                 {/* Horizontal reference line */}
                 <line x1="15" y1="80" x2="285" y2="80" stroke="#737373" strokeWidth="0.5" strokeDasharray="2 2" />
@@ -810,7 +810,7 @@ export default function ExtremesPage() {
           </div>
 
           {/* Card 3: Physics Attribution */}
-          <div className="bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-3.5">
+          <div className="bg-white dark:bg-[#141414] rounded-lg p-3.5">
             <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626] mb-1.5">
               <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide">
                 Physics Attribution
@@ -822,11 +822,11 @@ export default function ExtremesPage() {
             </p>
 
             <div className="space-y-1.5 text-[10px] font-mono">
-              <div className="p-1.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 flex items-start gap-1.5">
+              <div className="p-1.5 rounded text-neutral-700 dark:text-neutral-300 flex items-start gap-1.5">
                 <span className="text-neutral-900 dark:text-neutral-100 font-bold">01</span>
                 <span>Orographic windward ascent velocity (W &gt; 1.8 m/s along Western Ghats ridge)</span>
               </div>
-              <div className="p-1.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 flex items-start gap-1.5">
+              <div className="p-1.5 rounded text-neutral-700 dark:text-neutral-300 flex items-start gap-1.5">
                 <span className="text-neutral-900 dark:text-neutral-100 font-bold">02</span>
                 <span>Deep CAPE &gt; 2400 J/kg coupled with PWAT &gt; 62mm tropospheric moisture loading</span>
               </div>

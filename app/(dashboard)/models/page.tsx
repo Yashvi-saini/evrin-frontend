@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { Badge } from '@/shared/ui/badge';
@@ -69,7 +69,7 @@ export default function ModelsPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">AI/ML Post-Processing Architecture</h1>
-            <span className="text-[10px] px-2.5 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-800 dark:text-neutral-200 font-mono font-bold bg-neutral-100 dark:bg-[#1a1a1a]">
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full text-neutral-800 dark:text-neutral-200 font-mono font-bold">
               RESIDUAL-GNN + REGIME-MoE
             </span>
           </div>
@@ -114,7 +114,7 @@ export default function ModelsPage() {
       {/* Selected Stage Deep-Dive Diagnostics */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Column: Stage Architectural Specifications */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4 space-y-4">
+        <div className="lg:col-span-7 bg-white dark:bg-[#141414] rounded-lg p-4 space-y-4">
           <div className="flex items-center justify-between pb-2.5 border-b border-neutral-200 dark:border-[#262626]">
             <div>
               <div className="text-xs font-bold text-neutral-900 dark:text-neutral-100 uppercase tracking-wide flex items-center gap-2">
@@ -123,32 +123,32 @@ export default function ModelsPage() {
               </div>
               <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{currentStage.subtitle}</span>
             </div>
-            <span className="text-[10px] px-2.5 py-0.5 rounded-full border border-neutral-300 dark:border-[#262626] text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-[#1a1a1a]">
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full text-neutral-700 dark:text-neutral-300">
               {currentStage.latency} INFERENCE
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-2.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="p-2.5 rounded">
               <div className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase">Core Architecture</div>
               <div className="font-bold text-neutral-900 dark:text-neutral-100 mt-0.5 font-mono text-[11px]">{currentStage.arch}</div>
             </div>
-            <div className="p-2.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="p-2.5 rounded">
               <div className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase">Input Tensor Shape</div>
               <div className="font-bold text-neutral-900 dark:text-neutral-100 mt-0.5 font-mono text-[11px] truncate">{currentStage.tensor}</div>
             </div>
-            <div className="p-2.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="p-2.5 rounded">
               <div className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase">Learnable Parameters</div>
               <div className="font-bold text-neutral-900 dark:text-neutral-100 mt-0.5 font-mono text-[11px]">{currentStage.params}</div>
             </div>
-            <div className="p-2.5 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="p-2.5 rounded">
               <div className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase">Hardware Acceleration</div>
               <div className="font-bold text-neutral-900 dark:text-neutral-100 mt-0.5 font-mono text-[11px]">TensorRT FP16 @ A100</div>
             </div>
           </div>
 
           {/* Physical Mechanism Explainer */}
-          <div className="p-3 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626] text-xs">
+          <div className="p-3 rounded text-xs">
             <div className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-semibold mb-1">
               Meteorological Inductive Bias:
             </div>
@@ -159,7 +159,7 @@ export default function ModelsPage() {
         </div>
 
         {/* Right Column: Training Telemetry & Benchmark Card */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-lg p-4 space-y-3.5">
+        <div className="lg:col-span-5 bg-white dark:bg-[#141414] rounded-lg p-4 space-y-3.5">
           <div className="flex items-center justify-between pb-2 border-b border-neutral-200 dark:border-[#262626]">
             <span className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-semibold">
               Training & Optimization Profile
@@ -168,27 +168,27 @@ export default function ModelsPage() {
           </div>
 
           <div className="space-y-2 text-xs">
-            <div className="flex justify-between items-center p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="flex justify-between items-center p-2 rounded">
               <span className="text-neutral-500 dark:text-neutral-400 text-[11px]">Objective Loss:</span>
               <span className="text-neutral-900 dark:text-neutral-100 font-bold font-mono">Regime-Weighted Pinball + EVT Tail Penalty</span>
             </div>
 
-            <div className="flex justify-between items-center p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="flex justify-between items-center p-2 rounded">
               <span className="text-neutral-500 dark:text-neutral-400 text-[11px]">Training Dataset:</span>
               <span className="text-neutral-800 dark:text-neutral-200 font-bold font-mono">44 Years (16,070 Monsoon Days)</span>
             </div>
 
-            <div className="flex justify-between items-center p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="flex justify-between items-center p-2 rounded">
               <span className="text-neutral-500 dark:text-neutral-400 text-[11px]">Observation Truth:</span>
               <span className="text-neutral-800 dark:text-neutral-200 font-bold font-mono">IMD 0.25° Daily Gridded Rain</span>
             </div>
 
-            <div className="flex justify-between items-center p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="flex justify-between items-center p-2 rounded">
               <span className="text-neutral-500 dark:text-neutral-400 text-[11px]">Throughput:</span>
               <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">14.8 Full Grids / Minute</span>
             </div>
 
-            <div className="flex justify-between items-center p-2 rounded bg-neutral-50 dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#262626]">
+            <div className="flex justify-between items-center p-2 rounded">
               <span className="text-neutral-500 dark:text-neutral-400 text-[11px]">Quantile Output:</span>
               <span className="text-neutral-900 dark:text-neutral-100 font-bold font-mono">P10, P25, P50, P75, P90, P95</span>
             </div>

@@ -11,9 +11,10 @@ import { ExecutionModal } from '@/features/run-evrin';
 
 export interface TopbarProps {
   onToggleMobileMenu?: () => void;
+  onRunEnsemble?: () => void;
 }
 
-export function Topbar({ onToggleMobileMenu }: TopbarProps) {
+export function Topbar({ onToggleMobileMenu, onRunEnsemble }: TopbarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
@@ -143,12 +144,12 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
           </button>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="w-6 h-6 rounded bg-neutral-100 dark:bg-[#141414] border border-neutral-300 dark:border-[#262626] flex items-center justify-center text-neutral-800 dark:text-neutral-200 shrink-0">
+            <div className="w-6 h-6 rounded bg-neutral-100 dark:bg-[#141414] flex items-center justify-center text-neutral-800 dark:text-neutral-200 shrink-0">
               <CloudRain size={14} />
             </div>
             <div className="flex items-center gap-1 sm:gap-1.5">
               <span className="font-bold text-neutral-900 dark:text-neutral-100 text-xs sm:text-sm tracking-wider whitespace-nowrap">EVRIN OPS</span>
-              <span className="text-[8px] sm:text-[9px] bg-neutral-100 dark:bg-[#141414] text-neutral-800 dark:text-neutral-200 px-1 py-0.5 rounded font-semibold border border-neutral-300 dark:border-[#262626] shrink-0">
+              <span className="text-[8px] sm:text-[9px] bg-neutral-100 dark:bg-[#141414] text-neutral-800 dark:text-neutral-200 px-1 py-0.5 rounded font-semibold shrink-0">
                 PRO
               </span>
               <span className="text-[10px] text-neutral-500 dark:text-neutral-400 hidden 2xl:inline ml-1 whitespace-nowrap">
@@ -181,7 +182,7 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
           {/* Light / Dark Mode Toggle Pill */}
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] border border-neutral-300 dark:border-[#262626] text-neutral-600 dark:text-neutral-300 text-xs transition-colors shrink-0"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] text-neutral-600 dark:text-neutral-300 text-xs transition-colors shrink-0"
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             aria-label="Toggle theme"
           >
@@ -199,7 +200,7 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
           </button>
 
           {/* Scenario Selector Pill */}
-          <div className="flex items-center gap-1 bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] border border-neutral-300 dark:border-[#262626] rounded-full px-2.5 sm:px-3 py-1 text-xs transition-colors shrink-0">
+          <div className="flex items-center gap-1 bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] rounded-full px-2.5 sm:px-3 py-1 text-xs transition-colors shrink-0">
             <span className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase hidden sm:inline whitespace-nowrap">Scenario:</span>
             <select
               value={activeScenarioId}
@@ -219,7 +220,7 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
           <div ref={exportRef} className="relative hidden md:block">
             <button
               onClick={() => setIsExportOpen((v) => !v)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white border border-neutral-300 dark:border-[#262626] text-xs px-3 py-1 transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full bg-transparent hover:bg-neutral-100 dark:hover:bg-[#141414] text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white text-xs px-3 py-1 transition-colors whitespace-nowrap shrink-0"
             >
               <Download size={12} className="shrink-0" />
               <span>Quick Export</span>
@@ -231,7 +232,7 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
 
             {/* Dropdown Panel */}
             {isExportOpen && (
-              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#141414] border border-neutral-200 dark:border-[#262626] rounded-xl shadow-lg z-50 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#141414] rounded-xl shadow-lg z-50 overflow-hidden">
                 <div className="px-3 py-2 border-b border-neutral-100 dark:border-[#262626]">
                   <p className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Export Options
@@ -265,7 +266,7 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
 
           {/* Run EVRIN Action Button */}
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => (onRunEnsemble ? onRunEnsemble() : setIsModalOpen(true))}
             disabled={isLoading}
             className="inline-flex items-center gap-1.5 rounded-full bg-[#1A8FCB] text-white dark:bg-white dark:text-black hover:bg-[#167db3] dark:hover:bg-neutral-200 text-xs font-semibold px-3.5 py-1 transition-all border border-[#1A8FCB] dark:border-white shadow-sm whitespace-nowrap shrink-0"
           >
@@ -275,8 +276,8 @@ export function Topbar({ onToggleMobileMenu }: TopbarProps) {
         </div>
       </header>
 
-      {/* 7-Step Sequential Execution Stepper Modal */}
-      <ExecutionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* 7-Step Sequential Execution Stepper Modal (fallback if not handled by parent) */}
+      {!onRunEnsemble && <ExecutionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />}
     </>
   );
 }
